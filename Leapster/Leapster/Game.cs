@@ -4,7 +4,10 @@ using Veldrid;
 using System.Numerics;
 using Veldrid.Sdl2;
 using ImGuiNET;
+using Silk.NET.SDL;
+using Silk.NET.OpenGL;
 
+using SysColor = System.Drawing.Color;
 namespace Leapster;
 
 public class Game
@@ -25,9 +28,14 @@ public class Game
     private CommandList commands;
     private ImGuiController imguiController;
 
-    private Vector3 clearColor = new Vector3(0.45f, 0.55f, 0.6f);
+	private readonly SysColor clearColor = SysColor.FromArgb(115, 140, 153, 255);
 
-    private Stopwatch deltaTimeWatch;
+	private Sdl sdl;
+	private unsafe Window* window;
+	private SdlContext sdlContext;
+
+	private IntPtr glContext;
+	private GL gl;
 
     public Game()
     {
@@ -39,28 +47,41 @@ public class Game
         Instance = this;
     }
 
-    public void InitRenderer()
+	private unsafe void InitRenderer()
     {
-        // Create window, GraphicsDevice, and all resources necessary for the demo.
-        VeldridStartup.CreateWindowAndGraphicsDevice(
-            new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, "Leapster"),
-            new GraphicsDeviceOptions(true, null, true, ResourceBindingModel.Improved, true, true),
-            out window,
-            out graphicsDevice);
+		sdl = SdlProvider.SDL.Value;
 
-        window.Resized += () =>
+		WindowFlags windowFlags = WindowFlags.Opengl | WindowFlags.Resizable | WindowFlags.AllowHighdpi | WindowFlags.Shown;
+
+		window = sdl.CreateWindow("Leapster", 50, 50, 1280, 720, (uint)windowFlags);
+
+		// Create context for rendering		
+		sdlContext = new SdlContext(sdl, window);
+		sdlContext.Create();
+		glContext = sdlContext.Handle;
+
+		sdlContext.MakeCurrent();
+		sdl.GLSetSwapInterval(-1); // -1 is vsync
+
+		gl = GL.GetApi(sdlContext);
+
+		InitImGui();
+	}
+
+	private unsafe void InitImGui()
         {
-            graphicsDevice.MainSwapchain.Resize((uint)window.Width, (uint)window.Height);
+		ImGui.CreateContext();
             imguiController.WindowResized(window.Width, window.Height);
         };
 
         commands = graphicsDevice.ResourceFactory.CreateCommandList();
         imguiController = new ImGuiController(graphicsDevice, graphicsDevice.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height);
 
-        deltaTimeWatch = Stopwatch.StartNew();
+		ImGui.ImGui_ImplSDL2_InitForOpenGL(new IntPtr(window), glContext);
+		ImGui.ImGui_ImplOpenGL3_Init("#version 130");
     }
 
-    public void StartGame()
+	public unsafe void StartGame()
     {
         InitRenderer();
 
@@ -72,10 +93,11 @@ public class Game
             RenderLoop();
         }
 
-        graphicsDevice.WaitForIdle();
-        imguiController.Dispose();
-        commands.Dispose();
-        graphicsDevice.Dispose();
+		gl.Dispose();
+		sdlContext.Dispose();
+
+		sdl.DestroyWindow(window);
+		sdl.Quit();
     }
 
     public void StopGame()
@@ -85,32 +107,67 @@ public class Game
 
     private void RenderLoop()
     {
-        DeltaTime = deltaTimeWatch.ElapsedTicks / (float)Stopwatch.Frequency;
-        deltaTimeWatch.Restart();
-        InputSnapshot snapshot = window.PumpEvents();
-        if (!window.Exists)
+
+		Event sdlEvent = new();
+		while (sdl.PollEvent(ref sdlEvent) != 0)
+		{
+			unsafe
+			{
+				ImGui.ImGui_ImplSDL2_ProcessEvent(new IntPtr(&sdlEvent));
+			}
+
+			EventType eventType = (EventType)sdlEvent.Type;
+
+			if (eventType == EventType.Quit)
+				Running = false;
+
+			if (eventType == EventType.Windowevent) unsafe
+			{
+				if ((WindowEventID)sdlEvent.Window.Event == WindowEventID.Close && sdlEvent.Window.WindowID == sdl.GetWindowID(window))
         {
             Running = false;
         }
+			}
+		}
 
-        imguiController.Update(DeltaTime, snapshot);
+		ImGui.ImGui_ImplSDL2_NewFrame();
+		ImGui.ImGui_ImplOpenGL3_NewFrame();
+		ImGui.NewFrame();
 
         // Render GUI here
         if (InMainMenu)
         {
             RenderMainMenu();
-        } else
+		}
+		else
         {
             OnRender();
         }
 
-        commands.Begin();
-        commands.SetFramebuffer(graphicsDevice.MainSwapchain.Framebuffer);
-        commands.ClearColorTarget(0, new RgbaFloat(clearColor.X, clearColor.Y, clearColor.Z, 1f));
-        imguiController.Render(graphicsDevice, commands);
-        commands.End();
-        graphicsDevice.SubmitCommands(commands);
-        graphicsDevice.SwapBuffers(graphicsDevice.MainSwapchain);
+		unsafe
+		{
+			int windowWidth = 0;
+			int windowHeight = 0;
+
+			sdl.GetWindowSize(window, ref windowWidth, ref windowHeight);
+
+			ImGui.Render();
+			gl.Viewport(0, 0, (uint)windowWidth, (uint)windowHeight);
+			gl.ClearColor(clearColor);
+			gl.Clear(ClearBufferMask.ColorBufferBit);
+			ImGui.ImGui_ImplOpenGL3_RenderDrawData(ImGui.GetDrawData());
+
+			if (ImGui.GetIO().ConfigFlags.HasFlag(ImGuiConfigFlags.ViewportsEnable))
+			{
+				Window* backup_current_window = sdl.GLGetCurrentWindow();
+				void* backup_current_context = sdl.GLGetCurrentContext();
+				ImGui.UpdatePlatformWindows();
+				ImGui.RenderPlatformWindowsDefault();
+				sdl.GLMakeCurrent(backup_current_window, backup_current_context);
+			}
+
+			sdl.GLSwapWindow(window);
+		}
     }
 
     private void RenderMainMenu()
@@ -122,9 +179,14 @@ public class Game
         ImGui.SetCursorPos(center - new Vector2(50, 50));
 
         ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 10);
-        ImGui.PushFont(imguiController.BigFont);
-        ImGui.Button("test", new Vector2(100, 100));
-        ImGui.PopFont();
+		//ImGui.PushFont(BigFont);
+		
+		if (ImGui.Button("start idk", new Vector2(100, 100)))
+		{
+			InMainMenu = false;
+		}
+		
+		//ImGui.PopFont();
 
         ImGui.PopStyleVar();
 
