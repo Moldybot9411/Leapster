@@ -36,14 +36,7 @@ public class Player
     private void UpdatePosition()
     {
         //Gravity
-        if (position.Y <= 500)
-        {
-            Velocity.Y += Config.Gravity * Config.TimeScale * ImGui.GetIO().DeltaTime;
-        }
-        else
-        {
-            Velocity.Y = 0.0f;
-        }
+        Velocity.Y += Config.Gravity * Config.TimeScale * ImGui.GetIO().DeltaTime;
 
         //Movement
         if (ImGui.IsKeyDown(ImGuiKey.A))
@@ -60,14 +53,31 @@ public class Player
         float t = 0.85f;
         Velocity.X = Velocity.X * t + 0.0f * (1 - t);
 
+        CheckCollisions();
+
         //Jumping
         if (ImGui.IsKeyPressed(ImGuiKey.Space) && Velocity.Y == 0)
         {
             Velocity.Y = JumpForce;
         }
 
+
         //Updating Positions based on Velocity
         position.Y += Velocity.Y;
         position.X += Velocity.X;
+    }
+
+    private void CheckCollisions()
+    {
+        Vector2 bottomRight = position + size;
+
+        foreach (Vector4 Box in Game.Instance.CurrentLevel.Boxes)
+        {
+            if(bottomRight.Y > Box.Y && bottomRight.Y < Box.Y + Box.W &&bottomRight.X > Box.X && bottomRight.X < Box.X + Box.Z)
+            {
+                position.Y = Box.Y - size.Y;
+                Velocity.Y = 0;
+            }
+        }
     }
 }

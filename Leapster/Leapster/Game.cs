@@ -16,6 +16,7 @@ public class Game
     public event Action OnRender = delegate { };
 
     public static Game Instance { get; private set; }
+    public Level CurrentLevel { get; private set; }
 
     public static bool InMainMenu { get; private set; } = true;
 
@@ -64,7 +65,7 @@ public class Game
         InitRenderer();
 
         Player player = new();
-        Level level = new();
+        CurrentLevel = new Level();
 
         while(Running)
         {
