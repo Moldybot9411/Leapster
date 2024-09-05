@@ -92,7 +92,7 @@ public static class ImGuiExtensions
 
     public static void HelpMarker(string description)
     {
-        ImGui.TextDisabled(FontAwesome6.CircleQuestion);
+        ImGui.TextDisabled("(?)");
         if (ImGui.BeginItemTooltip())
         {
             ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
