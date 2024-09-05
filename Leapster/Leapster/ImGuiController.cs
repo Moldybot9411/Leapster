@@ -12,6 +12,8 @@ namespace Leapster;
 /// </summary>
 public class ImGuiController : IDisposable
 {
+    public ImFontPtr BigFont { get; private set; }
+
     private GraphicsDevice _gd;
     private bool _frameBegun;
 
@@ -75,6 +77,7 @@ public class ImGuiController : IDisposable
         float baseFontSize = 15f;
 
         ImFontPtr robotoFont = fonts.LoadFontFromResources(assetsPath + ".Roboto.Roboto-Regular.ttf", assembly, baseFontSize);
+        BigFont = fonts.LoadFontFromResources(assetsPath + ".Roboto.Roboto-Regular.ttf", assembly, baseFontSize * 2);
         ImGui.GetIO().NativePtr->FontDefault = robotoFont.NativePtr;
 
         fonts.Build();

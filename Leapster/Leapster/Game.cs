@@ -17,6 +17,8 @@ public class Game
 
     public static Game Instance { get; private set; }
 
+    public static bool InMainMenu { get; private set; } = true;
+
     private Sdl2Window window;
     private GraphicsDevice graphicsDevice;
     private CommandList commands;
@@ -93,7 +95,13 @@ public class Game
         imguiController.Update(DeltaTime, snapshot);
 
         // Render GUI here
-        OnRender();
+        if (InMainMenu)
+        {
+            RenderMainMenu();
+        } else
+        {
+            OnRender();
+        }
 
         commands.Begin();
         commands.SetFramebuffer(graphicsDevice.MainSwapchain.Framebuffer);
@@ -102,5 +110,26 @@ public class Game
         commands.End();
         graphicsDevice.SubmitCommands(commands);
         graphicsDevice.SwapBuffers(graphicsDevice.MainSwapchain);
+    }
+
+    private void RenderMainMenu()
+    {
+        ImGui.Begin("test", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse);
+
+        Vector2 center = ImGui.GetIO().DisplaySize / 2;
+
+        ImGui.SetCursorPos(center - new Vector2(50, 50));
+
+        ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 10);
+        ImGui.PushFont(imguiController.BigFont);
+        ImGui.Button("test", new Vector2(100, 100));
+        ImGui.PopFont();
+
+        ImGui.PopStyleVar();
+
+        ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
+        ImGui.SetWindowPos(Vector2.Zero);
+
+        ImGui.End();
     }
 }
