@@ -60,6 +60,8 @@ public class Game
     {
         InitRenderer();
 
+        Level level = new();
+
         while(Running)
         {
             RenderLoop();
