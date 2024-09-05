@@ -93,6 +93,14 @@ public class Game
         imguiController.Update(DeltaTime, snapshot);
 
 
+        ImGui.Begin("the h");
+
+        ImGui.Text(FontAwesome6.PowerOff);
+
+        ImGui.ShowDemoWindow();
+
+        ImGui.End();
+
         // Render GUI here
         OnRender();
 

@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using System.Globalization;
 using System.Numerics;
 
 namespace Leapster;
@@ -9,10 +10,12 @@ public class Level
 
     public Vector4 BoxColor = new(0, 0, 0, 1);
 
+#if DEBUG
     private bool spawnBox;
-    private Vector2 spawnBoxSize;
+    private Vector2 spawnBoxSize = new(10, 10);
 
     private string generatedText = "";
+#endif
 
     public Level()
     {
@@ -35,7 +38,12 @@ public class Level
 
             if (ImGui.Button("Generate level data"))
             {
-                generatedText = string.Join(",\n", Boxes.Select(box => $"new Vector4({box.X}, {box.Y}, {box.Z}, {box.W})"));
+                string FloatToString(float f)
+                {
+                    return f.ToString(CultureInfo.InvariantCulture) + "f";
+                }
+
+                generatedText = string.Join(",\n", Boxes.Select(box => $"new Vector4({FloatToString(box.X)}, {FloatToString(box.Y)}, {FloatToString(box.Z)}, {FloatToString(box.W)})"));
             }
 
             ImGui.InputTextMultiline("Generated", ref generatedText, (uint)generatedText.Length + 1, Vector2.Zero);
