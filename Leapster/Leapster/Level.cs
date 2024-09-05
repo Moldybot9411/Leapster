@@ -75,6 +75,11 @@ public class Level
                     if (changed)
                         Boxes[i] = box;
 
+                    if (ImGui.Button("Delete"))
+                    {
+                        Boxes.RemoveAt(i);
+                    }
+
                     ImGui.TreePop();
                 }
             }
