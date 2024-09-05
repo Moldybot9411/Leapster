@@ -14,6 +14,8 @@ public class Game
 
     public event Action OnRender = delegate { };
 
+    public static Game Instance { get; private set; }
+
     private Sdl2Window window;
     private GraphicsDevice graphicsDevice;
     private CommandList commands;
@@ -22,6 +24,16 @@ public class Game
     private Vector3 clearColor = new Vector3(0.45f, 0.55f, 0.6f);
 
     private Stopwatch deltaTimeWatch;
+
+    public Game()
+    {
+        if (Instance != null)
+        {
+            throw new Exception("not allowed, game already created");
+        }
+
+        Instance = this;
+    }
 
     public void InitRenderer()
     {
