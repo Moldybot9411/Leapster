@@ -61,7 +61,7 @@ public class Game
     {
         InitRenderer();
 
-        Player player = new Player();
+        Player player = new();
         Level level = new();
 
         while(Running)
