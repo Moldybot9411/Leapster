@@ -35,7 +35,12 @@ public class Level
 
             if (ImGui.Button("Generate level data"))
             {
-                generatedText = string.Join(",\n", Boxes.Select(box => $"new Vector4({box.X}, {box.Y}, {box.Z}, {box.W})"));
+                string FloatToString(float f)
+                {
+                    return f.ToString(CultureInfo.InvariantCulture) + "f";
+                }
+
+                generatedText = string.Join(",\n", Boxes.Select(box => $"new Vector4({FloatToString(box.X)}, {FloatToString(box.Y)}, {FloatToString(box.Z)}, {FloatToString(box.W)})"));
             }
 
             ImGui.InputTextMultiline("Generated", ref generatedText, (uint)generatedText.Length + 1, Vector2.Zero);
