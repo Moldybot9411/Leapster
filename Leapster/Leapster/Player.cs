@@ -13,7 +13,8 @@ namespace Leapster;
 public class Player
 {
     public Vector2 Velocity;
-    public float Speed = 350.0f;
+    public float Speed = 300.0f;
+    public float JumpForce = -3.5f;
 
     private Vector2 position = new(50.0f, 50.0f);
     private Vector2 size = new(20.0f, 40.0f);
@@ -44,16 +45,28 @@ public class Player
             Velocity.Y = 0.0f;
         }
 
-        if (ImGui.IsKeyPressed(ImGuiKey.A))
+        //Movement
+        if (ImGui.IsKeyDown(ImGuiKey.A))
         {
             Velocity.X = -Speed * ImGui.GetIO().DeltaTime * Config.TimeScale;
         }
 
-        if (ImGui.IsKeyPressed(ImGuiKey.D))
+        if (ImGui.IsKeyDown(ImGuiKey.D))
         {
-            Velocity.X = Speed * ImGui.GetIO().DeltaTime;
+            Velocity.X = Speed * ImGui.GetIO().DeltaTime * Config.TimeScale;
         }
 
+        //Lerping Speed to 0
+        float t = 0.85f;
+        Velocity.X = Velocity.X * t + 0.0f * (1 - t);
+
+        //Jumping
+        if (ImGui.IsKeyPressed(ImGuiKey.Space) && Velocity.Y == 0)
+        {
+            Velocity.Y = JumpForce;
+        }
+
+        //Updating Positions based on Velocity
         position.Y += Velocity.Y;
         position.X += Velocity.X;
     }
