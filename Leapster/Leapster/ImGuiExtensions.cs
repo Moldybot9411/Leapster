@@ -24,82 +24,70 @@ public static class ImGuiExtensions
         return color.ToVector().ToImguiColor();
     }
 
-    private static IntPtr GetFontDataFromResources(string resourceName, Assembly assembly, out int fontDataLength)
-    {
-        using Stream fontStream = assembly.GetManifestResourceStream(resourceName);
+	private static IntPtr GetFontDataFromResources(string resourceName, Assembly assembly, out int fontDataLength)
+	{
+		using Stream fontStream = assembly.GetManifestResourceStream(resourceName);
 
-        byte[] fontData = new byte[fontStream.Length];
-        fontStream.Read(fontData, 0, (int)fontStream.Length);
+		byte[] fontData = new byte[fontStream.Length];
+		fontStream.Read(fontData, 0, (int)fontStream.Length);
 
-        IntPtr fontPtr = ImGui.MemAlloc((uint)fontData.Length);
-        Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+		IntPtr fontPtr = ImGui.MemAlloc((uint)fontData.Length);
+		Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
 
-        fontDataLength = fontData.Length;
+		fontDataLength = fontData.Length;
 
-        return fontPtr;
-    }
+		return fontPtr;
+	}
 
-    public static unsafe ImFontPtr LoadFontFromResources(this ImFontAtlasPtr fontAtlas, string resourceName, Assembly assembly, float fontSize)
-    {
-        IntPtr fontPtr = GetFontDataFromResources(resourceName, assembly, out int fontDataLength);
+	public static unsafe ImFontPtr LoadFontFromResources(this ImFontAtlasPtr fontAtlas, string resourceName, Assembly assembly, float fontSize)
+	{
+		IntPtr fontPtr = GetFontDataFromResources(resourceName, assembly, out int fontDataLength);
 
-        return fontAtlas.AddFontFromMemoryTTF(fontPtr, fontDataLength, fontSize);
-    }
+		return fontAtlas.AddFontFromMemoryTTF(fontPtr, fontDataLength, fontSize);
+	}
 
-    public static unsafe ImFontPtr LoadFontFromResources(this ImFontAtlasPtr fontAtlas, string resourceName, Assembly assembly, float fontSize, ImFontConfigPtr fontConfig)
-    {
-        IntPtr fontPtr = GetFontDataFromResources(resourceName, assembly, out int fontDataLength);
+	public static unsafe ImFontPtr LoadFontFromResources(this ImFontAtlasPtr fontAtlas, string resourceName, Assembly assembly, float fontSize, ImFontConfigPtr fontConfig)
+	{
+		IntPtr fontPtr = GetFontDataFromResources(resourceName, assembly, out int fontDataLength);
 
-        return fontAtlas.AddFontFromMemoryTTF(fontPtr, fontDataLength, fontSize, fontConfig);
-    }
+		return fontAtlas.AddFontFromMemoryTTF(fontPtr, fontDataLength, fontSize, fontConfig);
+	}
 
-    public static unsafe ImFontPtr LoadFontFromResources(this ImFontAtlasPtr fontAtlas, string resourceName, Assembly assembly, float fontSize, ImFontConfigPtr fontConfig, IntPtr glyphRanges)
-    {
-        IntPtr fontPtr = GetFontDataFromResources(resourceName, assembly, out int fontDataLength);
+	public static unsafe ImFontPtr LoadFontFromResources(this ImFontAtlasPtr fontAtlas, string resourceName, Assembly assembly, float fontSize, ImFontConfigPtr fontConfig, IntPtr glyphRanges)
+	{
+		IntPtr fontPtr = GetFontDataFromResources(resourceName, assembly, out int fontDataLength);
 
-        return fontAtlas.AddFontFromMemoryTTF(fontPtr, fontDataLength, fontSize, fontConfig, glyphRanges);
-    }
+		return fontAtlas.AddFontFromMemoryTTF(fontPtr, fontDataLength, fontSize, fontConfig, glyphRanges);
+	}
 
-    public static unsafe ImFontPtr LoadIconFontFromResources(this ImFontAtlasPtr fontAtlas, string resourceName, Assembly assembly, float size, (uint, uint) range)
-    {
-        ImFontConfigPtr configuration = ImGuiNative.ImFontConfig_ImFontConfig();
+	public static unsafe ImFontPtr LoadIconFontFromResources(this ImFontAtlasPtr fontAtlas, string resourceName, Assembly assembly, float size, (ushort, ushort) range)
+	{
+		ImFontConfigPtr configuration = ImGuiNative.ImFontConfig_ImFontConfig();
 
-        configuration.MergeMode = true;
-        configuration.PixelSnapH = true;
-        configuration.GlyphOffset = new Vector2(0, 1);
+		configuration.MergeMode = true;
+		configuration.PixelSnapH = true;
+		configuration.GlyphOffset = new Vector2(0, 1);
 
-        GCHandle rangeHandle = GCHandle.Alloc(new uint[]
-        {
-            range.Item1,
-            range.Item2,
-            0
-        }, GCHandleType.Pinned);
+		GCHandle rangeHandle = GCHandle.Alloc(new ushort[]
+		{
+			range.Item1,
+			range.Item2,
+			0
+		}, GCHandleType.Pinned);
 
-        try
-        {
-            return fontAtlas.LoadFontFromResources(resourceName, assembly, size, configuration, rangeHandle.AddrOfPinnedObject());
-        }
-        finally
-        {
-            configuration.Destroy();
+		try
+		{
+			return fontAtlas.LoadFontFromResources(resourceName, assembly, size, configuration, rangeHandle.AddrOfPinnedObject());
+		}
+		finally
+		{
+			configuration.Destroy();
 
-            if (rangeHandle.IsAllocated)
-            {
-                rangeHandle.Free();
-            }
-        }
-    }
-
-    public static void HelpMarker(string description)
-    {
-        ImGui.TextDisabled("(?)");
-        if (ImGui.BeginItemTooltip())
-        {
-            ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
-            ImGui.TextUnformatted(description);
-            ImGui.PopTextWrapPos();
-            ImGui.EndTooltip();
-        }
-    }
+			if (rangeHandle.IsAllocated)
+			{
+				rangeHandle.Free();
+			}
+		}
+	}
 
 }

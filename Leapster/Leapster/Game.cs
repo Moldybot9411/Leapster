@@ -1,32 +1,25 @@
-﻿using System.Diagnostics;
-using Veldrid.StartupUtilities;
-using Veldrid;
-using System.Numerics;
-using Veldrid.Sdl2;
+﻿using System.Numerics;
 using ImGuiNET;
 using Silk.NET.SDL;
 using Silk.NET.OpenGL;
 
 using SysColor = System.Drawing.Color;
+using System.Reflection;
+
 namespace Leapster;
 
 public class Game
 {
-    public float DeltaTime = 0f;
+	public bool Running { get; private set; } = true;
 
-    public bool Running { get; private set; } = true;
+	public event Action OnRender = delegate { };
 
-    public event Action OnRender = delegate { };
+	public static Game Instance { get; private set; }
+	public Level CurrentLevel { get; private set; }
 
-    public static Game Instance { get; private set; }
-    public Level CurrentLevel { get; private set; }
+	public static bool InMainMenu { get; private set; } = true;
 
-    public static bool InMainMenu { get; private set; } = true;
-
-    private Sdl2Window window;
-    private GraphicsDevice graphicsDevice;
-    private CommandList commands;
-    private ImGuiController imguiController;
+	public ImFontPtr BigFont { get; private set; }
 
 	private readonly SysColor clearColor = SysColor.FromArgb(115, 140, 153, 255);
 
@@ -37,18 +30,18 @@ public class Game
 	private IntPtr glContext;
 	private GL gl;
 
-    public Game()
-    {
-        if (Instance != null)
-        {
-            throw new Exception("not allowed, game already created");
-        }
+	public Game()
+	{
+		if (Instance != null)
+		{
+			throw new Exception("not allowed, game already created");
+		}
 
-        Instance = this;
-    }
+		Instance = this;
+	}
 
 	private unsafe void InitRenderer()
-    {
+	{
 		sdl = SdlProvider.SDL.Value;
 
 		WindowFlags windowFlags = WindowFlags.Opengl | WindowFlags.Resizable | WindowFlags.AllowHighdpi | WindowFlags.Shown;
@@ -69,44 +62,59 @@ public class Game
 	}
 
 	private unsafe void InitImGui()
-        {
+	{
 		ImGui.CreateContext();
-            imguiController.WindowResized(window.Width, window.Height);
-        };
 
-        commands = graphicsDevice.ResourceFactory.CreateCommandList();
-        imguiController = new ImGuiController(graphicsDevice, graphicsDevice.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height);
+		string assetsPath = typeof(Game).Namespace + ".Assets";
+		Assembly assembly = Assembly.GetExecutingAssembly();
+
+		ImFontAtlasPtr fonts = ImGui.GetIO().Fonts;
+
+		float baseFontSize = 15f;
+		float iconFontSize = baseFontSize / 3 * 3.5f;
+
+		// load small and big version of font
+		ImFontPtr robotoFont = fonts.LoadFontFromResources(assetsPath + ".Roboto.Roboto-Regular.ttf", assembly, baseFontSize);
+		BigFont = fonts.LoadFontFromResources(assetsPath + ".Roboto.Roboto-Regular.ttf", assembly, baseFontSize * 2);
+		ImGui.GetIO().NativePtr->FontDefault = robotoFont.NativePtr;
+
+		// Load FontAwesome icon font
+		(ushort, ushort) fontAwesomeRange = (FontAwesome6.IconMin, FontAwesome6.IconMax16);
+		ImFontPtr first = fonts.LoadIconFontFromResources(assetsPath + ".FontAwesome." + FontAwesome6.FontIconFileNameFAR, assembly, iconFontSize, fontAwesomeRange);
+		ImFontPtr second = fonts.LoadIconFontFromResources(assetsPath + ".FontAwesome." + FontAwesome6.FontIconFileNameFAS, assembly, iconFontSize, fontAwesomeRange);
+
+		fonts.Build();
 
 		ImGui.ImGui_ImplSDL2_InitForOpenGL(new IntPtr(window), glContext);
 		ImGui.ImGui_ImplOpenGL3_Init("#version 130");
-    }
+	}
 
 	public unsafe void StartGame()
-    {
-        InitRenderer();
+	{
+		InitRenderer();
 
-        Player player = new();
-        CurrentLevel = new Level();
+		Player player = new();
+		CurrentLevel = new Level();
 
-        while(Running)
-        {
-            RenderLoop();
-        }
+		while(Running)
+		{
+			RenderLoop();
+		}
 
 		gl.Dispose();
 		sdlContext.Dispose();
 
 		sdl.DestroyWindow(window);
 		sdl.Quit();
-    }
+	}
 
-    public void StopGame()
-    {
-        Running = false;
-    }
+	public void StopGame()
+	{
+		Running = false;
+	}
 
-    private void RenderLoop()
-    {
+	private void RenderLoop()
+	{
 
 		Event sdlEvent = new();
 		while (sdl.PollEvent(ref sdlEvent) != 0)
@@ -124,9 +132,9 @@ public class Game
 			if (eventType == EventType.Windowevent) unsafe
 			{
 				if ((WindowEventID)sdlEvent.Window.Event == WindowEventID.Close && sdlEvent.Window.WindowID == sdl.GetWindowID(window))
-        {
-            Running = false;
-        }
+				{
+					Running = false;
+				}
 			}
 		}
 
@@ -134,15 +142,15 @@ public class Game
 		ImGui.ImGui_ImplOpenGL3_NewFrame();
 		ImGui.NewFrame();
 
-        // Render GUI here
-        if (InMainMenu)
-        {
-            RenderMainMenu();
+		// Render GUI here
+		if (InMainMenu)
+		{
+			RenderMainMenu();
 		}
 		else
-        {
-            OnRender();
-        }
+		{
+			OnRender();
+		}
 
 		unsafe
 		{
@@ -168,31 +176,31 @@ public class Game
 
 			sdl.GLSwapWindow(window);
 		}
-    }
+	}
 
-    private void RenderMainMenu()
-    {
-        ImGui.Begin("test", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse);
+	private void RenderMainMenu()
+	{
+		ImGui.Begin("test", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse);
 
-        Vector2 center = ImGui.GetIO().DisplaySize / 2;
+		Vector2 center = ImGui.GetIO().DisplaySize / 2;
 
-        ImGui.SetCursorPos(center - new Vector2(50, 50));
+		ImGui.SetCursorPos(center - new Vector2(50, 50));
 
-        ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 10);
-		//ImGui.PushFont(BigFont);
+		ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 10);
+		ImGui.PushFont(BigFont);
 		
 		if (ImGui.Button("start idk", new Vector2(100, 100)))
 		{
 			InMainMenu = false;
 		}
 		
-		//ImGui.PopFont();
+		ImGui.PopFont();
 
-        ImGui.PopStyleVar();
+		ImGui.PopStyleVar();
 
-        ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
-        ImGui.SetWindowPos(Vector2.Zero);
+		ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
+		ImGui.SetWindowPos(Vector2.Zero);
 
-        ImGui.End();
-    }
+		ImGui.End();
+	}
 }
