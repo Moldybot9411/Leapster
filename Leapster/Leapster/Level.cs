@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using System.Globalization;
 using System.Numerics;
 
 namespace Leapster;
@@ -9,10 +10,12 @@ public class Level
 
     public Vector4 BoxColor = new(0, 0, 0, 1);
 
+#if DEBUG
     private bool spawnBox;
-    private Vector2 spawnBoxSize;
+    private Vector2 spawnBoxSize = new(10, 10);
 
     private string generatedText = "";
+#endif
 
     public Level()
     {
