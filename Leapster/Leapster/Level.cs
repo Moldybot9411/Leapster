@@ -6,11 +6,21 @@ namespace Leapster;
 
 public class Level
 {
-    public List<Vector4> Boxes { get; private set; } = new();
+    public List<Vector4> Boxes { get; private set; } = new()
+    {
+        new Vector4(22f, 382f, 300f, 32.093f),
+        new Vector4(431f, 479f, 300f, 32.093f),
+        new Vector4(755f, 374f, 300f, 32.093f),
+        new Vector4(720f, 452f, 93.023f, 32.093f),
+        new Vector4(749f, 427f, 93.023f, 32.093f),
+        new Vector4(756f, 404f, 93.023f, 32.093f),
+        new Vector4(23f, 179f, 100f, 38.983f)
+    };
 
     public Vector4 BoxColor = new(0, 0, 0, 1);
 
 #if DEBUG
+    private bool levelEditorOpen = true;
     private bool spawnBox;
     private Vector2 spawnBoxSize = new(10, 10);
 
@@ -20,14 +30,12 @@ public class Level
     public Level()
     {
         Game.Instance.OnRender += OnRender;
-
-        Boxes.Add(new Vector4(10, 10, 20, 20));
     }
 
     private void OnRender()
     {
 #if DEBUG
-        if (ImGui.Begin("Level Editor"))
+        if (levelEditorOpen && ImGui.Begin("Level Editor", ref levelEditorOpen))
         {
             ImGui.ColorPicker4("Box color", ref BoxColor);
 
