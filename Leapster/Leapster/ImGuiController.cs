@@ -51,7 +51,7 @@ public class ImGuiController : IDisposable
     /// <summary>
     /// Constructs a new ImGuiController.
     /// </summary>
-    public ImGuiController(GraphicsDevice gd, OutputDescription outputDescription, int width, int height)
+    public unsafe ImGuiController(GraphicsDevice gd, OutputDescription outputDescription, int width, int height)
     {
         _gd = gd;
         _windowWidth = width;
@@ -59,10 +59,25 @@ public class ImGuiController : IDisposable
 
         ImGui.CreateContext();
         var io = ImGui.GetIO();
+        
         io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
+        
         io.ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard |
             ImGuiConfigFlags.DockingEnable;
+        
         io.Fonts.Flags |= ImFontAtlasFlags.NoBakedLines;
+        
+        string assetsPath = typeof(ImGuiController).Namespace + ".Assets";
+        Assembly assembly = Assembly.GetExecutingAssembly();
+
+        ImFontAtlasPtr fonts = ImGui.GetIO().Fonts;
+
+        float baseFontSize = 15f;
+
+        ImFontPtr robotoFont = fonts.LoadFontFromResources(assetsPath + ".Roboto.Roboto-Regular.ttf", assembly, baseFontSize);
+        ImGui.GetIO().NativePtr->FontDefault = robotoFont.NativePtr;
+
+        fonts.Build();
 
         CreateDeviceResources(gd, outputDescription);
         SetPerFrameImGuiData(1f / 60f);
