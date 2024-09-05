@@ -3,6 +3,7 @@ using Veldrid.StartupUtilities;
 using Veldrid;
 using System.Numerics;
 using Veldrid.Sdl2;
+using ImGuiNET;
 
 namespace Leapster;
 
@@ -40,7 +41,7 @@ public class Game
         // Create window, GraphicsDevice, and all resources necessary for the demo.
         VeldridStartup.CreateWindowAndGraphicsDevice(
             new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, "Leapster"),
-            new GraphicsDeviceOptions(true, null, false, ResourceBindingModel.Improved, true, true),
+            new GraphicsDeviceOptions(true, null, true, ResourceBindingModel.Improved, true, true),
             out window,
             out graphicsDevice);
 
@@ -60,6 +61,7 @@ public class Game
     {
         InitRenderer();
 
+        Player player = new Player();
         Level level = new();
 
         while(Running)
@@ -89,6 +91,7 @@ public class Game
         }
 
         imguiController.Update(DeltaTime, snapshot);
+
 
         // Render GUI here
         OnRender();
