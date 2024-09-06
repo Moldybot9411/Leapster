@@ -120,8 +120,6 @@ public class Game : Application
 			return;
         }
 
-		ImGui.ShowDemoWindow();
-
         OnRender();
     }
 }
