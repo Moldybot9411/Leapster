@@ -39,7 +39,7 @@ public class Level
         {
             Vector2 topLeft = new Vector2(rect.X, rect.Y);
             Vector2 topRight = topLeft + new Vector2(rect.Z, rect.W);
-            draw.AddRectFilled(topLeft, topRight, ImGui.ColorConvertFloat4ToU32(BoxColor));
+            draw.AddRectFilled(topLeft + Screenshake.ShakeOffset, topRight + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(BoxColor));
         }
 
     }

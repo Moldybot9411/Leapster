@@ -27,7 +27,7 @@ public class Player
 
         Vector2 topLeft = position;
         Vector2 bottomRight = topLeft + size;
-        ImGui.GetBackgroundDrawList().AddRectFilled(topLeft, bottomRight, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 0, 0, 1)));
+        ImGui.GetBackgroundDrawList().AddRectFilled(topLeft + Screenshake.ShakeOffset, bottomRight + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 0, 0, 1)));
     }
 
     private void UpdatePosition()
@@ -54,7 +54,7 @@ public class Player
 
 
         //Jumping
-        if ((ImGui.IsKeyPressed(ImGuiKey.Space) || ImGui.IsKeyPressed(ImGuiKey.GamepadFaceDown)) /*&& Velocity.Y <= 0.15f && Velocity.Y >= 0*/)
+        if ((ImGui.IsKeyPressed(ImGuiKey.Space) || ImGui.IsKeyPressed(ImGuiKey.GamepadFaceDown)))
         {
             jumpQueued = true;
             JumpPressed();
@@ -63,6 +63,7 @@ public class Player
         if(Velocity.Y <= 0.15f && Velocity.Y >= 0 && jumpQueued && isGrounded)
         {
             Velocity.Y = JumpForce;
+            Screenshake.Shake(30f, 0.01f);
             jumpQueued = false;
         }
 
@@ -129,8 +130,6 @@ public class Player
                 }
             }
         }
-
-        Console.WriteLine(isGrounded);
     }
 
     private async void JumpPressed()
@@ -155,4 +154,6 @@ public class Player
             return false;
         }
     }
+
+    
 }
