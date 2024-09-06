@@ -32,12 +32,12 @@ public class Player
         Velocity.Y += Config.Gravity * Config.TimeScale * ImGui.GetIO().DeltaTime;
 
         //Movement
-        if (ImGui.IsKeyDown(ImGuiKey.A))
+        if (ImGui.IsKeyDown(ImGuiKey.A) || ImGui.IsKeyDown(ImGuiKey.GamepadLStickLeft))
         {
             Velocity.X = -Speed * ImGui.GetIO().DeltaTime * Config.TimeScale;
         }
 
-        if (ImGui.IsKeyDown(ImGuiKey.D))
+        if (ImGui.IsKeyDown(ImGuiKey.D) || ImGui.IsKeyDown(ImGuiKey.GamepadLStickRight))
         {
             Velocity.X = Speed * ImGui.GetIO().DeltaTime * Config.TimeScale;
         }
@@ -49,7 +49,7 @@ public class Player
         CheckCollisions();
 
         //Jumping
-        if (ImGui.IsKeyPressed(ImGuiKey.Space) && Velocity.Y == 0)
+        if ((ImGui.IsKeyPressed(ImGuiKey.Space) || ImGui.IsKeyPressed(ImGuiKey.GamepadFaceDown)) && Velocity.Y == 0)
         {
             Velocity.Y = JumpForce;
         }

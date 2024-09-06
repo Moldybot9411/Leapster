@@ -59,6 +59,8 @@ public class Game : Application
 	{
 		base.InitImGui();
 
+		ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableGamepad;
+
 		string assetsPath = typeof(Game).Namespace + ".Assets";
 		Assembly assembly = Assembly.GetExecutingAssembly();
 
@@ -117,6 +119,9 @@ public class Game : Application
             RenderMainMenu();
 			return;
         }
+
+		ImGui.ShowDemoWindow();
+
         OnRender();
     }
 
