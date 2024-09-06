@@ -6,16 +6,9 @@ namespace Leapster;
 
 public class Level
 {
-    public List<Vector4> Boxes { get; private set; } = new()
-    {
-        new Vector4(22f, 382f, 300f, 32.093f),
-        new Vector4(431f, 479f, 300f, 32.093f),
-        new Vector4(755f, 374f, 300f, 32.093f),
-        new Vector4(720f, 452f, 93.023f, 32.093f),
-        new Vector4(749f, 427f, 93.023f, 32.093f),
-        new Vector4(756f, 404f, 93.023f, 32.093f),
-        new Vector4(23f, 179f, 100f, 38.983f)
-    };
+    public Vector2 PlayerSpawn { get; private set; }
+
+    public List<Vector4> Boxes { get; private set; } = new();
 
     public Vector4 BoxColor = new(0, 0, 0, 1);
 
@@ -29,7 +22,22 @@ public class Level
 
     public Level()
     {
+    }
+
+    public Level(Vector2 playerSpawn, params Vector4[] boxes)
+    {
+        PlayerSpawn = playerSpawn;
+        Boxes.AddRange(boxes);
+    }
+
+    public void OnLoad()
+    {
         Game.Instance.OnRender += OnRender;
+    }
+
+    public void OnUnload()
+    {
+        Game.Instance.OnRender -= OnRender;
     }
 
     private void OnRender()

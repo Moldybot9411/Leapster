@@ -8,11 +8,14 @@ namespace Leapster;
 
 public class Game : Application
 {
+	public static Game Instance { get; private set; }
+
 	public event Action OnRender = delegate { };
 
-	public static Game Instance { get; private set; }
+	public Player Player { get; private set; }
+
 	public Level CurrentLevel { get; private set; }
-	public List<Level> AvailableLevels { get; private set; }
+	public List<Level> AvailableLevels { get; private set; } = Levels.AllLevels;
 
 	public bool InMainMenu
 	{
@@ -79,10 +82,11 @@ public class Game : Application
 
     protected override void OnStart()
     {
-		Player player = new();
-		CurrentLevel = new Level();
+		Player = new();
 
-		InMainMenu = true;
+		LoadLevel(0);
+
+        InMainMenu = true;
     }
 
 	public void StopGame()
@@ -90,16 +94,30 @@ public class Game : Application
 		Running = false;
 	}
 
+	public void LoadLevel(int index)
+	{
+		LoadLevel(AvailableLevels[index]);
+	}
+
+	private void LoadLevel(Level level)
+	{
+		CurrentLevel?.OnUnload();
+
+		CurrentLevel = level;
+		CurrentLevel.OnLoad();
+
+		Player.position = CurrentLevel.PlayerSpawn;
+		Player.Velocity = Vector2.Zero;
+	}
+
     protected override void OnRenderImGui()
     {
         if (InMainMenu)
         {
             RenderMainMenu();
+			return;
         }
-        else
-        {
-            OnRender();
-        }
+        OnRender();
     }
 
     private Vector2 childSize = Vector2.Zero;

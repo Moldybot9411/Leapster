@@ -1,12 +1,5 @@
 ﻿using ImGuiNET;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Leapster;
 
@@ -15,8 +8,8 @@ public class Player
     public Vector2 Velocity;
     public float Speed = 300.0f;
     public float JumpForce = -3.5f;
+    public Vector2 position = new(50.0f, 50.0f);
 
-    private Vector2 position = new(50.0f, 50.0f);
     private Vector2 size = new(20.0f, 40.0f);
 
     public Player()
