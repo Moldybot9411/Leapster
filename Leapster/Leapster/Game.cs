@@ -54,7 +54,7 @@ public class Game
 		glContext = sdlContext.Handle;
 
 		sdlContext.MakeCurrent();
-		sdl.GLSetSwapInterval(-1); // -1 is vsync
+		sdl.GLSetSwapInterval(1); // -1 is vsync
 
 		gl = GL.GetApi(sdlContext);
 
