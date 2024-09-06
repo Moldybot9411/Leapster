@@ -49,7 +49,7 @@ public class Player
 
 
         //Jumping
-        if ((ImGui.IsKeyPressed(ImGuiKey.Space) || ImGui.IsKeyPressed(ImGuiKey.GamepadFaceDown)) && Velocity.Y == 0)
+        if ((ImGui.IsKeyPressed(ImGuiKey.Space) || ImGui.IsKeyPressed(ImGuiKey.GamepadFaceDown)) && Velocity.Y <= 0.15f && Velocity.Y >= 0)
         {
             Velocity.Y = JumpForce;
         }
