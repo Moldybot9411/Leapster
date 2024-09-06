@@ -1,90 +1,202 @@
-﻿using System.Diagnostics;
-using Veldrid.StartupUtilities;
-using Veldrid;
-using System.Numerics;
-using Veldrid.Sdl2;
+﻿using System.Numerics;
+using ImGuiNET;
+
+using SysColor = System.Drawing.Color;
+using System.Reflection;
 
 namespace Leapster;
 
-public class Game
+public class Game : Application
 {
-    public float DeltaTime = 0f;
+	public static Game Instance { get; private set; }
 
-    public bool Running { get; private set; } = true;
+	public event Action OnRender = delegate { };
 
-    public event Action OnRender = delegate { };
+	public Player Player { get; private set; }
 
-    private Sdl2Window window;
-    private GraphicsDevice graphicsDevice;
-    private CommandList commands;
-    private ImGuiController imguiController;
+	public Level CurrentLevel { get; private set; }
+	public List<Level> AvailableLevels { get; private set; } = Levels.AllLevels;
 
-    private Vector3 clearColor = new Vector3(0.45f, 0.55f, 0.6f);
+	public bool InMainMenu
+	{
+		get => inMainMenu;
+		private set
+		{
+			inMainMenu = value;
+			clearColor = inMainMenu ? mainMenuClearColor : defaultClearColor;
+		}
+	}
 
-    private Stopwatch deltaTimeWatch;
+	private bool inMainMenu;
 
-    public void InitRenderer()
+	public ImFontPtr BigFont { get; private set; }
+
+	private bool inOptionsWindow = false;
+
+	private readonly SysColor defaultClearColor = SysColor.FromArgb(255, 115, 140, 153);
+	private readonly SysColor mainMenuClearColor = SysColor.FromArgb(240, 40, 15, 15);
+
+    private readonly int[] resolutionInput = [0, 0];
+
+    public Game()
+	{
+		if (Instance != null)
+		{
+			throw new Exception("not allowed, game already created");
+		}
+
+		Instance = this;
+	}
+
+	protected override unsafe void InitRenderer()
+	{
+		base.InitRenderer();
+
+		sdl.GetWindowSize(window, ref resolutionInput[0], ref resolutionInput[1]);
+	}
+
+	protected override unsafe void InitImGui()
+	{
+		base.InitImGui();
+
+		ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableGamepad;
+
+		string assetsPath = typeof(Game).Namespace + ".Assets";
+		Assembly assembly = Assembly.GetExecutingAssembly();
+
+		ImFontAtlasPtr fonts = ImGui.GetIO().Fonts;
+
+		float baseFontSize = 15f;
+		float iconFontSize = baseFontSize / 3 * 3.5f;
+
+		// load small and big version of font
+		ImFontPtr robotoFont = fonts.LoadFontFromResources(assetsPath + ".Roboto.Roboto-Regular.ttf", assembly, baseFontSize);
+		BigFont = fonts.LoadFontFromResources(assetsPath + ".Roboto.Roboto-Regular.ttf", assembly, baseFontSize * 2);
+		ImGui.GetIO().NativePtr->FontDefault = robotoFont.NativePtr;
+
+		// Load FontAwesome icon font
+		(ushort, ushort) fontAwesomeRange = (FontAwesome6.IconMin, FontAwesome6.IconMax16);
+		ImFontPtr first = fonts.LoadIconFontFromResources(assetsPath + ".FontAwesome." + FontAwesome6.FontIconFileNameFAR, assembly, iconFontSize, fontAwesomeRange);
+		ImFontPtr second = fonts.LoadIconFontFromResources(assetsPath + ".FontAwesome." + FontAwesome6.FontIconFileNameFAS, assembly, iconFontSize, fontAwesomeRange);
+
+		fonts.Build();
+	}
+
+    protected override void OnStart()
     {
-        // Create window, GraphicsDevice, and all resources necessary for the demo.
-        VeldridStartup.CreateWindowAndGraphicsDevice(
-            new WindowCreateInfo(50, 50, 1280, 720, WindowState.Normal, "Leapster"),
-            new GraphicsDeviceOptions(true, null, false, ResourceBindingModel.Improved, true, true),
-            out window,
-            out graphicsDevice);
+		Player = new();
 
-        window.Resized += () =>
-        {
-            graphicsDevice.MainSwapchain.Resize((uint)window.Width, (uint)window.Height);
-            imguiController.WindowResized(window.Width, window.Height);
-        };
+		LoadLevel(0);
 
-        commands = graphicsDevice.ResourceFactory.CreateCommandList();
-        imguiController = new ImGuiController(graphicsDevice, graphicsDevice.MainSwapchain.Framebuffer.OutputDescription, window.Width, window.Height);
-
-        deltaTimeWatch = Stopwatch.StartNew();
+        InMainMenu = true;
     }
 
-    public void StartGame()
-    {
-        InitRenderer();
+	public void StopGame()
+	{
+		Running = false;
+	}
 
-        while(Running)
+	public void LoadLevel(int index)
+	{
+		LoadLevel(AvailableLevels[index]);
+	}
+
+	private void LoadLevel(Level level)
+	{
+		CurrentLevel?.OnUnload();
+
+		CurrentLevel = level;
+		CurrentLevel.OnLoad();
+
+		Player.position = CurrentLevel.PlayerSpawn;
+		Player.Velocity = Vector2.Zero;
+	}
+
+    protected override void OnRenderImGui()
+    {
+        if (InMainMenu)
         {
-            RenderLoop();
+            RenderMainMenu();
+			return;
         }
 
-        graphicsDevice.WaitForIdle();
-        imguiController.Dispose();
-        commands.Dispose();
-        graphicsDevice.Dispose();
-    }
-
-    public void StopGame()
-    {
-        Running = false;
-    }
-
-    private void RenderLoop()
-    {
-        DeltaTime = deltaTimeWatch.ElapsedTicks / (float)Stopwatch.Frequency;
-        deltaTimeWatch.Restart();
-        InputSnapshot snapshot = window.PumpEvents();
-        if (!window.Exists)
-        {
-            Running = false;
-        }
-
-        imguiController.Update(DeltaTime, snapshot);
-
-        // Render GUI here
         OnRender();
-
-        commands.Begin();
-        commands.SetFramebuffer(graphicsDevice.MainSwapchain.Framebuffer);
-        commands.ClearColorTarget(0, new RgbaFloat(clearColor.X, clearColor.Y, clearColor.Z, 1f));
-        imguiController.Render(graphicsDevice, commands);
-        commands.End();
-        graphicsDevice.SubmitCommands(commands);
-        graphicsDevice.SwapBuffers(graphicsDevice.MainSwapchain);
     }
+
+    private Vector2 childSize = Vector2.Zero;
+
+	private void RenderMainMenu()
+	{
+		ImGui.Begin("test", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoInputs);
+
+		Vector2 parentSize = ImGui.GetWindowSize();
+
+		ImGui.SetNextWindowPos((parentSize - childSize) / 2);
+
+		ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 10);
+		ImGui.PushFont(BigFont);
+
+		if (ImGui.BeginChild("mainMenu", Vector2.Zero, ImGuiChildFlags.AutoResizeX | ImGuiChildFlags.AutoResizeY))
+		{
+			Vector2 buttonSize = new Vector2(200, 100);
+
+			Vector2 cursorPos = ImGui.GetCursorPos();
+
+			ImGui.SetCursorPosX((childSize.X - ImGui.CalcTextSize("LEAPSTER").X) / 2f);
+			ImGui.Text("LEAPSTER");
+
+			ImGui.SetCursorPosX(cursorPos.X);
+
+            ImGui.Dummy(new Vector2(0.0f, 100.0f));
+
+            if (ImGui.Button("Start", buttonSize))
+			{
+				InMainMenu = false;
+			}
+
+			if (ImGui.Button("Options", buttonSize))
+			{
+				inOptionsWindow = !inOptionsWindow;
+			}
+
+			childSize = ImGui.GetWindowSize();
+
+			ImGui.EndChild();
+		}
+
+		ImGui.PopFont();
+
+		ImGui.PopStyleVar();
+
+		ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
+		ImGui.SetWindowPos(Vector2.Zero);
+
+		ImGui.End();
+
+		if (inOptionsWindow)
+		{
+			RenderOptionsMenu();
+		}
+	}
+
+	private void RenderOptionsMenu()
+	{
+		if (!ImGui.Begin("Options", ref inOptionsWindow))
+		{
+			ImGui.End();
+			return;
+        }
+
+		ImGui.InputInt2("Resolution", ref resolutionInput[0]);
+
+		if (ImGui.Button("Apply"))
+		{
+			unsafe
+			{
+				sdl.SetWindowSize(window, resolutionInput[0], resolutionInput[1]);
+			}
+		}
+
+        ImGui.End();
+	}
 }
