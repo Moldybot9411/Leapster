@@ -17,11 +17,14 @@ public class Game
 	public static Game Instance { get; private set; }
 	public Level CurrentLevel { get; private set; }
 
-	public static bool InMainMenu { get; private set; } = true;
+	public bool InMainMenu { get; private set; } = true;
 
 	public ImFontPtr BigFont { get; private set; }
 
-	private readonly SysColor clearColor = SysColor.FromArgb(115, 140, 153, 255);
+	private bool inOptionsWindow = false;
+
+	private readonly SysColor clearColor = SysColor.FromArgb(255, 115, 140, 153);
+	private readonly SysColor mainMenuClearColor = SysColor.FromArgb(240, 40, 15, 15);
 
 	private Sdl sdl;
 	private unsafe Window* window;
@@ -30,7 +33,9 @@ public class Game
 	private IntPtr glContext;
 	private GL gl;
 
-	public Game()
+    private readonly int[] resolutionInput = [0, 0];
+
+    public Game()
 	{
 		if (Instance != null)
 		{
@@ -44,7 +49,7 @@ public class Game
 	{
 		sdl = SdlProvider.SDL.Value;
 
-		WindowFlags windowFlags = WindowFlags.Opengl | WindowFlags.Resizable | WindowFlags.AllowHighdpi | WindowFlags.Shown;
+		WindowFlags windowFlags = WindowFlags.Opengl | WindowFlags.AllowHighdpi | WindowFlags.Shown;
 
 		window = sdl.CreateWindow("Leapster", 50, 50, 1280, 720, (uint)windowFlags);
 
@@ -59,6 +64,8 @@ public class Game
 		gl = GL.GetApi(sdlContext);
 
 		InitImGui();
+
+		sdl.GetWindowSize(window, ref resolutionInput[0], ref resolutionInput[1]);
 	}
 
 	private unsafe void InitImGui()
@@ -161,7 +168,9 @@ public class Game
 
 			ImGui.Render();
 			gl.Viewport(0, 0, (uint)windowWidth, (uint)windowHeight);
-			gl.ClearColor(clearColor);
+
+			gl.ClearColor(InMainMenu ? mainMenuClearColor : clearColor);
+			
 			gl.Clear(ClearBufferMask.ColorBufferBit);
 			ImGui.ImGui_ImplOpenGL3_RenderDrawData(ImGui.GetDrawData());
 
@@ -178,22 +187,47 @@ public class Game
 		}
 	}
 
+	private Vector2 childSize = Vector2.Zero;
+
 	private void RenderMainMenu()
 	{
-		ImGui.Begin("test", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse);
+		ImGui.Begin("test", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoInputs);
 
-		Vector2 center = ImGui.GetIO().DisplaySize / 2;
+		Vector2 parentSize = ImGui.GetWindowSize();
 
-		ImGui.SetCursorPos(center - new Vector2(50, 50));
+		ImGui.SetNextWindowPos((parentSize - childSize) / 2);
 
 		ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 10);
 		ImGui.PushFont(BigFont);
-		
-		if (ImGui.Button("start idk", new Vector2(100, 100)))
+
+		if (ImGui.BeginChild("mainMenu", Vector2.Zero, ImGuiChildFlags.AutoResizeX | ImGuiChildFlags.AutoResizeY))
 		{
-			InMainMenu = false;
+			Vector2 buttonSize = new Vector2(200, 100);
+
+			Vector2 cursorPos = ImGui.GetCursorPos();
+
+			ImGui.SetCursorPosX((childSize.X - ImGui.CalcTextSize("LEAPSTER").X) / 2f);
+			ImGui.Text("LEAPSTER");
+
+			ImGui.SetCursorPosX(cursorPos.X);
+
+            ImGui.Dummy(new Vector2(0.0f, 100.0f));
+
+            if (ImGui.Button("Start", buttonSize))
+			{
+				InMainMenu = false;
+			}
+
+			if (ImGui.Button("Options", buttonSize))
+			{
+				inOptionsWindow = !inOptionsWindow;
+			}
+
+			childSize = ImGui.GetWindowSize();
+
+			ImGui.EndChild();
 		}
-		
+
 		ImGui.PopFont();
 
 		ImGui.PopStyleVar();
@@ -202,5 +236,31 @@ public class Game
 		ImGui.SetWindowPos(Vector2.Zero);
 
 		ImGui.End();
+
+		if (inOptionsWindow)
+		{
+			RenderOptionsMenu();
+		}
+	}
+
+	private void RenderOptionsMenu()
+	{
+		if (!ImGui.Begin("Options", ref inOptionsWindow))
+		{
+			ImGui.End();
+			return;
+        }
+
+		ImGui.InputInt2("Resolution", ref resolutionInput[0]);
+
+		if (ImGui.Button("Apply"))
+		{
+			unsafe
+			{
+				sdl.SetWindowSize(window, resolutionInput[0], resolutionInput[1]);
+			}
+		}
+
+        ImGui.End();
 	}
 }
