@@ -40,6 +40,8 @@ public class MainmenuScreen : Screen
             }
         }
 
+        ImGui.Checkbox("FPS Overlay", ref Game.Instance.GameScreen.FPSOverlay);
+
         ImGui.End();
     }
 
