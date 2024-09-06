@@ -14,7 +14,7 @@ public class Player
 
     public Player()
     {
-        Game.Instance.OnRender += OnRenderFrame;
+        Game.Instance.GameScreen.OnRender += OnRenderFrame;
     }
 
     private void OnRenderFrame()

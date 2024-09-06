@@ -32,12 +32,12 @@ public class Level
 
     public void OnLoad()
     {
-        Game.Instance.OnRender += OnRender;
+        Game.Instance.GameScreen.OnRender += OnRender;
     }
 
     public void OnUnload()
     {
-        Game.Instance.OnRender -= OnRender;
+        Game.Instance.GameScreen.OnRender -= OnRender;
     }
 
     private void OnRender()

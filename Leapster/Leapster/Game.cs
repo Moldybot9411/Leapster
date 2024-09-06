@@ -1,8 +1,8 @@
 ﻿using System.Numerics;
 using ImGuiNET;
 
-using SysColor = System.Drawing.Color;
 using System.Reflection;
+using Leapster.Screens;
 
 namespace Leapster;
 
@@ -10,33 +10,15 @@ public class Game : Application
 {
 	public static Game Instance { get; private set; }
 
-	public event Action OnRender = delegate { };
-
 	public Player Player { get; private set; }
 
 	public Level CurrentLevel { get; private set; }
 	public List<Level> AvailableLevels { get; private set; } = Levels.AllLevels;
 
-	public bool InMainMenu
-	{
-		get => inMainMenu;
-		private set
-		{
-			inMainMenu = value;
-			clearColor = inMainMenu ? mainMenuClearColor : defaultClearColor;
-		}
-	}
-
-	private bool inMainMenu;
+	public Screen CurrentScreen { get; private set; } = null;
+	public GameScreen GameScreen { get; private set; } = new GameScreen();
 
 	public ImFontPtr BigFont { get; private set; }
-
-	private bool inOptionsWindow = false;
-
-	private readonly SysColor defaultClearColor = SysColor.FromArgb(255, 115, 140, 153);
-	private readonly SysColor mainMenuClearColor = SysColor.FromArgb(240, 40, 15, 15);
-
-    private readonly int[] resolutionInput = [0, 0];
 
     public Game()
 	{
@@ -46,13 +28,6 @@ public class Game : Application
 		}
 
 		Instance = this;
-	}
-
-	protected override unsafe void InitRenderer()
-	{
-		base.InitRenderer();
-
-		SdlInstance.GetWindowSize(ApplicationWindow, ref resolutionInput[0], ref resolutionInput[1]);
 	}
 
 	protected override unsafe void InitImGui()
@@ -86,9 +61,8 @@ public class Game : Application
     {
 		Player = new();
 
+		ShowScreen(new MainmenuScreen());
 		LoadLevel(0);
-
-        InMainMenu = true;
     }
 
 	public void StopGame()
@@ -112,14 +86,16 @@ public class Game : Application
 		Player.Velocity = Vector2.Zero;
 	}
 
+	public void ShowScreen(Screen screen)
+	{
+		CurrentScreen?.Hide();
+
+		CurrentScreen = screen;
+		CurrentScreen.Show();
+	}
+
     protected override void OnRenderImGui()
     {
-        if (InMainMenu)
-        {
-            RenderMainMenu();
-			return;
-        }
-
-        OnRender();
+		CurrentScreen.RenderImGui();
     }
 }

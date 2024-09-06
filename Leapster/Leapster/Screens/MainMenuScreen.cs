@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using System.Drawing;
 using System.Numerics;
 
 namespace Leapster.Screens;
@@ -10,14 +11,15 @@ public class MainmenuScreen : Screen
     private Vector2 childSize = Vector2.Zero;
     private int[] resolutionInput = [0, 0];
 
-    public override void Show()
+    public unsafe override void Show()
     {
-        throw new NotImplementedException();
+        Game.Instance.SdlInstance.GetWindowSize(Game.Instance.ApplicationWindow, ref resolutionInput[0], ref resolutionInput[1]);
+
+        Game.Instance.clearColor = Color.FromArgb(240, 40, 15, 15);
     }
 
     public override void Hide()
     {
-
     }
 
     private void RenderOptionsMenu()
@@ -67,7 +69,7 @@ public class MainmenuScreen : Screen
 
             if (ImGui.Button("Start", buttonSize))
             {
-                //TODO: Change screen to Game
+                Game.Instance.ShowScreen(Game.Instance.GameScreen);
             }
 
             if (ImGui.Button("Options", buttonSize))
