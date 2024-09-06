@@ -7,6 +7,6 @@ class Program
     {
         Game game = new();
 
-        game.StartGame();
+        game.Start();
     }
 }
