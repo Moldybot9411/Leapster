@@ -17,7 +17,7 @@ public class Application
     protected SdlContext sdlContext;
 
     protected IntPtr glContext;
-    public GL gl { get; protected set; }
+    public GL Gl { get; protected set; }
 
     protected unsafe virtual void InitRenderer()
     {
@@ -35,7 +35,7 @@ public class Application
         sdlContext.MakeCurrent();
         SdlInstance.GLSetSwapInterval(1); // -1 is vsync
 
-        gl = GL.GetApi(sdlContext);
+        Gl = GL.GetApi(sdlContext);
 
         InitImGui();
     }
@@ -60,7 +60,7 @@ public class Application
             RenderLoop();
         }
 
-        gl.Dispose();
+        Gl.Dispose();
         sdlContext.Dispose();
 
         SdlInstance.DestroyWindow(ApplicationWindow);
@@ -112,11 +112,11 @@ public class Application
             SdlInstance.GetWindowSize(ApplicationWindow, ref windowWidth, ref windowHeight);
 
             ImGui.Render();
-            gl.Viewport(0, 0, (uint)windowWidth, (uint)windowHeight);
+            Gl.Viewport(0, 0, (uint)windowWidth, (uint)windowHeight);
 
-            gl.ClearColor(clearColor);
+            Gl.ClearColor(clearColor);
 
-            gl.Clear(ClearBufferMask.ColorBufferBit);
+            Gl.Clear(ClearBufferMask.ColorBufferBit);
             ImGui.ImGui_ImplOpenGL3_RenderDrawData(ImGui.GetDrawData());
 
             if (ImGui.GetIO().ConfigFlags.HasFlag(ImGuiConfigFlags.ViewportsEnable))

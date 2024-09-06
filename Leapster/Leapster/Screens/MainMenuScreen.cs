@@ -79,6 +79,11 @@ public class MainmenuScreen : Screen
                 inOptionsWindow = !inOptionsWindow;
             }
 
+            if (ImGui.Button("Level Editor", buttonSize))
+            {
+                Game.Instance.ShowScreen(new LevelEditorScreen());
+            }
+
             childSize = ImGui.GetWindowSize();
 
             ImGui.EndChild();
