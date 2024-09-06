@@ -10,30 +10,30 @@ public class Application
 {
     public bool Running { get; protected set; } = true;
 
-    protected SysColor clearColor = SysColor.FromArgb(255, 115, 140, 153);
+    public SysColor clearColor = SysColor.FromArgb(255, 115, 140, 153);
 
-    protected Sdl sdl;
-    protected unsafe Window* window;
+    public Sdl SdlInstance { get; protected set; }
+    public unsafe Window* ApplicationWindow { get; protected set; }
     protected SdlContext sdlContext;
 
     protected IntPtr glContext;
-    protected GL gl;
+    public GL gl { get; protected set; }
 
     protected unsafe virtual void InitRenderer()
     {
-        sdl = SdlProvider.SDL.Value;
+        SdlInstance = SdlProvider.SDL.Value;
 
         WindowFlags windowFlags = WindowFlags.Opengl | WindowFlags.AllowHighdpi | WindowFlags.Shown;
 
-        window = sdl.CreateWindow("Leapster", 50, 50, 1280, 720, (uint)windowFlags);
+        ApplicationWindow = SdlInstance.CreateWindow("Leapster", 50, 50, 1280, 720, (uint)windowFlags);
 
         // Create context for rendering		
-        sdlContext = new SdlContext(sdl, window);
+        sdlContext = new SdlContext(SdlInstance, ApplicationWindow);
         sdlContext.Create();
         glContext = sdlContext.Handle;
 
         sdlContext.MakeCurrent();
-        sdl.GLSetSwapInterval(1); // -1 is vsync
+        SdlInstance.GLSetSwapInterval(1); // -1 is vsync
 
         gl = GL.GetApi(sdlContext);
 
@@ -43,7 +43,7 @@ public class Application
     protected unsafe virtual void InitImGui()
     {
         ImGui.CreateContext();
-        ImGui.ImGui_ImplSDL2_InitForOpenGL(new IntPtr(window), glContext);
+        ImGui.ImGui_ImplSDL2_InitForOpenGL(new IntPtr(ApplicationWindow), glContext);
         ImGui.ImGui_ImplOpenGL3_Init("#version 130");
     }
 
@@ -63,8 +63,8 @@ public class Application
         gl.Dispose();
         sdlContext.Dispose();
 
-        sdl.DestroyWindow(window);
-        sdl.Quit();
+        SdlInstance.DestroyWindow(ApplicationWindow);
+        SdlInstance.Quit();
     }
 
     public void Stop()
@@ -77,7 +77,7 @@ public class Application
     private void RenderLoop()
     {
         Event sdlEvent = new();
-        while (sdl.PollEvent(ref sdlEvent) != 0)
+        while (SdlInstance.PollEvent(ref sdlEvent) != 0)
         {
             unsafe
             {
@@ -91,7 +91,7 @@ public class Application
 
             if (eventType == EventType.Windowevent) unsafe
             {
-                if ((WindowEventID)sdlEvent.Window.Event == WindowEventID.Close && sdlEvent.Window.WindowID == sdl.GetWindowID(window))
+                if ((WindowEventID)sdlEvent.Window.Event == WindowEventID.Close && sdlEvent.Window.WindowID == SdlInstance.GetWindowID(ApplicationWindow))
                 {
                     Running = false;
                 }
@@ -109,7 +109,7 @@ public class Application
             int windowWidth = 0;
             int windowHeight = 0;
 
-            sdl.GetWindowSize(window, ref windowWidth, ref windowHeight);
+            SdlInstance.GetWindowSize(ApplicationWindow, ref windowWidth, ref windowHeight);
 
             ImGui.Render();
             gl.Viewport(0, 0, (uint)windowWidth, (uint)windowHeight);
@@ -121,14 +121,14 @@ public class Application
 
             if (ImGui.GetIO().ConfigFlags.HasFlag(ImGuiConfigFlags.ViewportsEnable))
             {
-                Window* backup_current_window = sdl.GLGetCurrentWindow();
-                void* backup_current_context = sdl.GLGetCurrentContext();
+                Window* backup_current_window = SdlInstance.GLGetCurrentWindow();
+                void* backup_current_context = SdlInstance.GLGetCurrentContext();
                 ImGui.UpdatePlatformWindows();
                 ImGui.RenderPlatformWindowsDefault();
-                sdl.GLMakeCurrent(backup_current_window, backup_current_context);
+                SdlInstance.GLMakeCurrent(backup_current_window, backup_current_context);
             }
 
-            sdl.GLSwapWindow(window);
+            SdlInstance.GLSwapWindow(ApplicationWindow);
         }
     }
 

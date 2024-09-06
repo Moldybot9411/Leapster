@@ -52,7 +52,7 @@ public class Game : Application
 	{
 		base.InitRenderer();
 
-		sdl.GetWindowSize(window, ref resolutionInput[0], ref resolutionInput[1]);
+		SdlInstance.GetWindowSize(ApplicationWindow, ref resolutionInput[0], ref resolutionInput[1]);
 	}
 
 	protected override unsafe void InitImGui()
@@ -124,81 +124,4 @@ public class Game : Application
 
         OnRender();
     }
-
-    private Vector2 childSize = Vector2.Zero;
-
-	private void RenderMainMenu()
-	{
-		ImGui.Begin("test", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoInputs);
-
-		Vector2 parentSize = ImGui.GetWindowSize();
-
-		ImGui.SetNextWindowPos((parentSize - childSize) / 2);
-
-		ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 10);
-		ImGui.PushFont(BigFont);
-
-		if (ImGui.BeginChild("mainMenu", Vector2.Zero, ImGuiChildFlags.AutoResizeX | ImGuiChildFlags.AutoResizeY))
-		{
-			Vector2 buttonSize = new Vector2(200, 100);
-
-			Vector2 cursorPos = ImGui.GetCursorPos();
-
-			ImGui.SetCursorPosX((childSize.X - ImGui.CalcTextSize("LEAPSTER").X) / 2f);
-			ImGui.Text("LEAPSTER");
-
-			ImGui.SetCursorPosX(cursorPos.X);
-
-            ImGui.Dummy(new Vector2(0.0f, 100.0f));
-
-            if (ImGui.Button("Start", buttonSize))
-			{
-				InMainMenu = false;
-			}
-
-			if (ImGui.Button("Options", buttonSize))
-			{
-				inOptionsWindow = !inOptionsWindow;
-			}
-
-			childSize = ImGui.GetWindowSize();
-
-			ImGui.EndChild();
-		}
-
-		ImGui.PopFont();
-
-		ImGui.PopStyleVar();
-
-		ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
-		ImGui.SetWindowPos(Vector2.Zero);
-
-		ImGui.End();
-
-		if (inOptionsWindow)
-		{
-			RenderOptionsMenu();
-		}
-	}
-
-	private void RenderOptionsMenu()
-	{
-		if (!ImGui.Begin("Options", ref inOptionsWindow))
-		{
-			ImGui.End();
-			return;
-        }
-
-		ImGui.InputInt2("Resolution", ref resolutionInput[0]);
-
-		if (ImGui.Button("Apply"))
-		{
-			unsafe
-			{
-				sdl.SetWindowSize(window, resolutionInput[0], resolutionInput[1]);
-			}
-		}
-
-        ImGui.End();
-	}
 }
