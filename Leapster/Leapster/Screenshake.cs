@@ -30,15 +30,9 @@ namespace Leapster
 
         private static void Update()
         {
-            currentAmount = Lerp(currentAmount, 0, 0.1f);
+            currentAmount = float.Lerp(currentAmount, 0, 0.1f);
 
             ShakeOffset = new Vector2((float)rand.NextDouble() * currentAmount, (float)rand.NextDouble() * currentAmount);
         }
-
-        static float Lerp(float a, float b, float f)
-        {
-            return a * (1.0f - f) + (b * f);
-        }
-
     }
 }

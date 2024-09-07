@@ -25,8 +25,8 @@ public class Player
     {
         UpdatePosition();
 
-        Vector2 topLeft = position;
-        Vector2 bottomRight = topLeft + size;
+		Vector2 topLeft = position;
+		Vector2 bottomRight = topLeft + size;
 		Vector2 center = (topLeft + bottomRight) * 0.5f;
 
 		ImDrawListPtr draw = ImGui.GetBackgroundDrawList();
@@ -38,7 +38,7 @@ public class Player
 		Vector2 textPosition = center - textSize * 0.5f + Screenshake.ShakeOffset;
 		draw.AddText(textPosition, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 1, 1)), "H");
 		ImGui.PopFont();
-    }
+	}
 
     private void UpdatePosition()
     {
@@ -60,7 +60,7 @@ public class Player
 
         //Lerping Speed to 0
         float t = 0.85f;
-        Velocity.X = Velocity.X * t + 0.0f * (1 - t);
+        Velocity.X = float.Lerp(0, Velocity.X, t);
 
 
         //Jumping
