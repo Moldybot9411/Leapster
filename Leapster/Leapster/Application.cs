@@ -33,7 +33,7 @@ public class Application
         glContext = sdlContext.Handle;
 
         sdlContext.MakeCurrent();
-        SdlInstance.GLSetSwapInterval(1); // -1 is vsync
+        SdlInstance.GLSetSwapInterval(0); // -1 is vsync
 
         Gl = GL.GetApi(sdlContext);
 

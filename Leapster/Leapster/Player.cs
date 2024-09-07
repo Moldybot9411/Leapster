@@ -6,8 +6,8 @@ namespace Leapster;
 public class Player
 {
     public Vector2 Velocity;
-    public float Speed = 300.0f;
-    public float JumpForce = -3.5f;
+    public float Speed = 250.0f;
+    public float JumpForce = -350f;
     public Vector2 position = new(50.0f, 50.0f);
 
     private Vector2 size = new(20.0f, 40.0f);
@@ -23,6 +23,7 @@ public class Player
 
     private void OnRenderFrame()
     {
+        CheckCollisions();
         UpdatePosition();
 
 		Vector2 topLeft = position;
@@ -42,25 +43,22 @@ public class Player
 
     private void UpdatePosition()
     {
-        CheckCollisions();
-
         //Gravity
-        Velocity.Y += Config.Gravity * Config.TimeScale * ImGui.GetIO().DeltaTime;
+        Velocity.Y += Config.Gravity * ImGui.GetIO().DeltaTime * Config.TimeScale;
 
         //Movement
         if (ImGui.IsKeyDown(ImGuiKey.A) || ImGui.IsKeyDown(ImGuiKey.GamepadLStickLeft))
         {
-            Velocity.X = -Speed * ImGui.GetIO().DeltaTime * Config.TimeScale;
+            Velocity.X = -Speed * Config.TimeScale;
         }
 
         if (ImGui.IsKeyDown(ImGuiKey.D) || ImGui.IsKeyDown(ImGuiKey.GamepadLStickRight))
         {
-            Velocity.X = Speed * ImGui.GetIO().DeltaTime * Config.TimeScale;
+            Velocity.X = Speed  * Config.TimeScale;
         }
 
         //Lerping Speed to 0
-        float t = 0.85f;
-        Velocity.X = float.Lerp(0, Velocity.X, t);
+        Velocity.X = float.Lerp(Velocity.X, 0, 8.5f * ImGui.GetIO().DeltaTime);
 
 
         //Jumping
@@ -70,22 +68,22 @@ public class Player
             JumpPressed();
         }
 
-        if(Velocity.Y <= 0.15f && Velocity.Y >= 0 && jumpQueued && isGrounded)
+        if(jumpQueued && isGrounded)
         {
             Velocity.Y = JumpForce;
-            Screenshake.Shake(30f, 0.01f);
+            Screenshake.Shake(30f, 10f);
             jumpQueued = false;
         }
 
 
         //Updating Positions based on Velocity
-        position.Y += Velocity.Y;
-        position.X += Velocity.X;
+        position.Y += Velocity.Y * ImGui.GetIO().DeltaTime;
+        position.X += Velocity.X * ImGui.GetIO().DeltaTime;
     }
 
     private void CheckCollisions()
     {
-        //Set to true when Player stood on any surface during the Frame. Is used to determine isGrounded
+        //Set to true when Player stood on any surface during the Frame
         isGrounded = false;
 
         foreach (Vector4 Box in Game.Instance.CurrentLevel.Boxes)
@@ -167,6 +165,4 @@ public class Player
             return false;
         }
     }
-
-    
 }

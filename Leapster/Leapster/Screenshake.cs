@@ -22,7 +22,7 @@ namespace Leapster
             Game.Instance.GameScreen.OnRender += Update;
         }
 
-        public static async void Shake(float Amount, float Duration)
+        public static void Shake(float Amount, float Duration)
         {
             currentAmount = Amount;
             duration = Duration;
@@ -30,7 +30,7 @@ namespace Leapster
 
         private static void Update()
         {
-            currentAmount = float.Lerp(currentAmount, 0, 0.1f);
+            currentAmount = float.Lerp(currentAmount, 0, duration * ImGui.GetIO().DeltaTime);
 
             ShakeOffset = new Vector2((float)rand.NextDouble() * currentAmount, (float)rand.NextDouble() * currentAmount);
         }
