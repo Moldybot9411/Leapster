@@ -1,33 +1,32 @@
 ﻿using ImGuiNET;
 using System.Numerics;
 
-namespace Leapster
+namespace Leapster;
+
+internal static class Screenshake
 {
-    internal static class Screenshake
+    public static Vector2 ShakeOffset;
+
+    private static float currentAmount;
+    private static float duration;
+
+    private static Random rand = new();
+
+    static Screenshake()
     {
-        public static Vector2 ShakeOffset;
+        Game.Instance.GameScreen.OnRender += Update;
+    }
 
-        private static float currentAmount;
-        private static float duration;
+    public static void Shake(float Amount, float Duration)
+    {
+        currentAmount = Amount;
+        duration = Duration;
+    }
 
-        private static Random rand = new();
+    private static void Update()
+    {
+        currentAmount = float.Lerp(currentAmount, 0, duration * ImGui.GetIO().DeltaTime);
 
-        static Screenshake()
-        {
-            Game.Instance.GameScreen.OnRender += Update;
-        }
-
-        public static void Shake(float Amount, float Duration)
-        {
-            currentAmount = Amount;
-            duration = Duration;
-        }
-
-        private static void Update()
-        {
-            currentAmount = float.Lerp(currentAmount, 0, duration * ImGui.GetIO().DeltaTime);
-
-            ShakeOffset = new Vector2((float)rand.NextDouble() * currentAmount, (float)rand.NextDouble() * currentAmount);
-        }
+        ShakeOffset = new Vector2((float)rand.NextDouble() * currentAmount, (float)rand.NextDouble() * currentAmount);
     }
 }

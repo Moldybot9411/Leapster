@@ -6,6 +6,6 @@ public class EditorLevel
 
     public List<EditorObject> Objects { get; private set; } = [];
 
-    public float Gravity = Config.Gravity;
-    public float TimeScale = Config.TimeScale;
+    public float Gravity = 980f;
+    public float TimeScale = 1f;
 }

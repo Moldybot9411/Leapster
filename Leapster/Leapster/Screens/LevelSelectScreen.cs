@@ -10,14 +10,23 @@ namespace Leapster.Screens;
 
 public class LevelSelectScreen : IScreen
 {
-    private Vector2 childSize = Vector2.Zero;
-    private string levelsFolder = "";
-    private string[] levelPaths = [];
-    private List<string> levelNames = [];
+    private readonly List<LevelData> levels = [];
+
+    private class LevelData
+    {
+        public string Name;
+        public string Path;
+        public string CreationTime;
+    }
 
     public unsafe void Show()
     {
         Game.Instance.clearColor = Color.FromArgb(255, 21, 10, 8);
+
+        if (IsLevelsFolderValid())
+        {
+            RescanLevelFolder();
+        }
     }
 
     public void Hide()
@@ -35,10 +44,6 @@ public class LevelSelectScreen : IScreen
             ImGuiWindowFlags.NoDocking |
             ImGuiWindowFlags.NoSavedSettings);
 
-        Vector2 parentSize = ImGui.GetWindowSize();
-
-        ImGui.SetNextWindowPos((parentSize - childSize) / 2);
-
         ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 2);
         ImGui.PushFont(Game.Instance.BigFont);
 
@@ -55,14 +60,14 @@ public class LevelSelectScreen : IScreen
 
             if (result.IsOk)
             {
-                levelsFolder = result.Path;
+                Game.Instance.Configuration.LevelsFolder = result.Path;
                 RescanLevelFolder();
             }
         }
         ImGui.SetItemTooltip("Open Levels folder");
 
         ImGui.SameLine();
-        ImGui.InputText("Levels folder", ref levelsFolder, 1000);
+        ImGui.InputText("Levels folder", ref Game.Instance.Configuration.LevelsFolder, 1000);
 
         ImGui.SameLine();
         if (ImGui.Button(FontAwesome6.Retweet))
@@ -86,22 +91,25 @@ public class LevelSelectScreen : IScreen
 
             ImGui.TableHeadersRow();
 
-            for (int i = 0; i < levelNames.Count(); i++)
+            for (int i = 0; i < levels.Count; i++)
             {
+                LevelData level = levels[i];
+
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
 
-                //ImGui.Text($"H {h}");
-                ImGui.Text(levelNames[i].ToString());
+                ImGui.Text(level.Name);
 
                 ImGui.TableNextColumn();
+
+                ImGui.Text(level.CreationTime);
 
                 ImGui.TableNextColumn();
 
                 if (ImGui.Button($"Play##{i}"))
                 {
                     Game.Instance.ShowScreen(Game.Instance.GameScreen);
-                    Game.Instance.GameScreen.LoadLevel(levelPaths[i]);
+                    Game.Instance.GameScreen.LoadLevel(level.Path);
                 }
             }
 
@@ -131,26 +139,33 @@ public class LevelSelectScreen : IScreen
         ImGui.End();
     }
 
-    private void RescanLevelFolder()
+    private static bool IsLevelsFolderValid() => Directory.Exists(Game.Instance.Configuration.LevelsFolder);
+
+	private void RescanLevelFolder()
     {
-        if (!Directory.Exists(levelsFolder))
+        if (!IsLevelsFolderValid())
         {
             Console.WriteLine("Specified level path is not valid!");
             ImGui.OpenPopup("ERROR");
             return;
         }
-        levelNames.Clear();
 
-        string[] files = Directory.GetFiles(levelsFolder);
+        levels.Clear();
 
-        levelPaths = files;
+        string[] files = Directory.GetFiles(Game.Instance.Configuration.LevelsFolder);
 
         foreach (string file in files)
         {
             try
             {
                 EditorLevel level = JsonConvert.DeserializeObject<EditorLevel>(File.ReadAllText(file));
-                levelNames.Add(level.Name);
+
+                levels.Add(new LevelData()
+                {
+                    Name = level.Name,
+                    CreationTime = File.GetCreationTime(file).ToString(),
+                    Path = file
+                });
             } catch(Exception)
             {
                 // Ignored, just dont display level no one cares

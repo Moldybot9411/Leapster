@@ -9,7 +9,9 @@ public class MainmenuScreen : IScreen
     private bool inOptionsWindow = false;
 
     private Vector2 childSize = Vector2.Zero;
-    private int[] resolutionInput = [0, 0];
+    private readonly int[] resolutionInput = [0, 0];
+
+    private static Config Configuration => Game.Instance.Configuration;
 
     public unsafe void Show()
     {
@@ -34,13 +36,26 @@ public class MainmenuScreen : IScreen
 
         if (ImGui.Button("Apply"))
         {
+			Configuration.Resolution = new Size(resolutionInput[0], resolutionInput[1]);
+            Configuration.SaveConfig();
             unsafe
             {
                 Game.Instance.SdlInstance.SetWindowSize(Game.Instance.ApplicationWindow, resolutionInput[0], resolutionInput[1]);
             }
         }
 
-        ImGui.Checkbox("FPS Overlay", ref Game.Instance.GameScreen.FPSOverlay);
+        if (ImGui.Checkbox("FPS Overlay", ref Configuration.FpsOverlay))
+        {
+            Configuration.FpsOverlay = Configuration.FpsOverlay;
+            Configuration.SaveConfig();
+        }
+
+#if DEBUG
+        if (ImGui.Checkbox("Debug mode", ref Configuration.DebugMode))
+        {
+            Configuration.SaveConfig();
+        }
+#endif
 
         ImGui.End();
     }

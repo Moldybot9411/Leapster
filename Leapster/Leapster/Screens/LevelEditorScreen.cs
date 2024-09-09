@@ -18,8 +18,6 @@ public class LevelEditorScreen : IScreen
     private Vector4 spawnColor = new(1f, 1f, 1f, 1f);
     private Vector2 objectSpawnSize = new(100, 100);
 
-    private string levelsFolder = "";
-
     private float gravity;
 
     private int currentLevelRandom;
@@ -143,19 +141,19 @@ public class LevelEditorScreen : IScreen
 
                 if (result.IsOk)
                 {
-                    levelsFolder = result.Path;
+                    Game.Instance.Configuration.LevelsFolder = result.Path;
                 }
             }
             ImGui.SetItemTooltip("Open Levels folder");
 
             ImGui.SameLine();
-            ImGui.InputText("Levels folder", ref levelsFolder, 1000);
+            ImGui.InputText("Levels folder", ref Game.Instance.Configuration.LevelsFolder, 1000);
 
             // Save Level
             if (ImGui.Button(FontAwesome6.FloppyDisk))
             {
                 string legalName = string.Join("_", level.Name.Split(Path.GetInvalidFileNameChars()));
-                string fileName = Path.Combine(levelsFolder, legalName + ".json");
+                string fileName = Path.Combine(Game.Instance.Configuration.LevelsFolder, legalName + ".json");
 
                 File.WriteAllText(fileName, JsonConvert.SerializeObject(level, Formatting.Indented));
             }
@@ -166,7 +164,7 @@ public class LevelEditorScreen : IScreen
             // Load Level
             if (ImGui.Button(FontAwesome6.FolderPlus))
             {
-                DialogResult result = Dialog.FileOpen("json", levelsFolder);
+                DialogResult result = Dialog.FileOpen("json", Game.Instance.Configuration.LevelsFolder);
 
                 if (result.IsOk)
                 {

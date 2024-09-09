@@ -28,17 +28,17 @@ public class CharacterController : Component
     {
         CheckCollisions();
         //Gravity
-        Velocity.Y += Config.Gravity * ImGui.GetIO().DeltaTime * Config.TimeScale;
+        Velocity.Y += Game.Instance.GameScreen.Gravity * ImGui.GetIO().DeltaTime * Game.Instance.GameScreen.TimeScale;
 
         //Movement
         if (ImGui.IsKeyDown(ImGuiKey.A) || ImGui.IsKeyDown(ImGuiKey.GamepadLStickLeft))
         {
-            Velocity.X = -Speed * Config.TimeScale;
+            Velocity.X = -Speed * Game.Instance.GameScreen.TimeScale;
         }
 
         if (ImGui.IsKeyDown(ImGuiKey.D) || ImGui.IsKeyDown(ImGuiKey.GamepadLStickRight))
         {
-            Velocity.X = Speed * Config.TimeScale;
+            Velocity.X = Speed * Game.Instance.GameScreen.TimeScale;
         }
 
         //Lerping Speed to 0
@@ -94,13 +94,15 @@ public class CharacterController : Component
                 float angleBottomRight = MathF.Atan2((box.Y + box.Height) - boxMiddle.Y, (box.X + box.Width) - boxMiddle.X);
 
 #if DEBUG
-                if (Config.DebugMode)
+                if (Game.Instance.Configuration.DebugMode)
                 {
-                    ImGui.GetForegroundDrawList().AddLine(playerMiddle, boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(0, 1, 0, 1)));
-                    ImGui.GetForegroundDrawList().AddLine(new Vector2(box.X, box.Y), boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
-                    ImGui.GetForegroundDrawList().AddLine(new Vector2(box.X, box.Y + box.Height), boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
-                    ImGui.GetForegroundDrawList().AddLine(new Vector2(box.X + box.Width, box.Y), boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
-                    ImGui.GetForegroundDrawList().AddLine(new Vector2(box.X + box.Width, box.Y + box.Height), boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
+                    ImDrawListPtr draw = ImGui.GetForegroundDrawList();
+
+                    draw.AddLine(playerMiddle, boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(0, 1, 0, 1)));
+                    draw.AddLine(new Vector2(box.X, box.Y) + Screenshake.ShakeOffset, boxMiddle + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
+                    draw.AddLine(new Vector2(box.X, box.Y + box.Height) + Screenshake.ShakeOffset, boxMiddle + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
+                    draw.AddLine(new Vector2(box.X + box.Width, box.Y) + Screenshake.ShakeOffset, boxMiddle + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
+					draw.AddLine(new Vector2(box.X + box.Width, box.Y + box.Height) + Screenshake.ShakeOffset, boxMiddle + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
                 }
 #endif
 

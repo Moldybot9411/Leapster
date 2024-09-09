@@ -24,7 +24,7 @@ public class RigidBody : Component
 
 
         //Gravity
-        Velocity.Y += Config.Gravity * ImGui.GetIO().DeltaTime * Config.TimeScale;
+        Velocity.Y += Game.Instance.GameScreen.Gravity * ImGui.GetIO().DeltaTime * Game.Instance.GameScreen.TimeScale;
 
 
         rect.Y += Velocity.Y * ImGui.GetIO().DeltaTime;
@@ -60,14 +60,16 @@ public class RigidBody : Component
                 float angleBottomRight = MathF.Atan2((box.Y + box.Width) - boxMiddle.Y, (box.X + box.Width) - boxMiddle.X);
 
 #if DEBUG
-                if (Config.DebugMode)
+                if (Game.Instance.Configuration.DebugMode)
                 {
-                    ImGui.GetForegroundDrawList().AddLine(playerMiddle, boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(0, 1, 0, 1)));
-                    ImGui.GetForegroundDrawList().AddLine(new Vector2(box.X, box.Y), boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
-                    ImGui.GetForegroundDrawList().AddLine(new Vector2(box.X, box.Y + box.Height), boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
-                    ImGui.GetForegroundDrawList().AddLine(new Vector2(box.X + box.Width, box.Y), boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
-                    ImGui.GetForegroundDrawList().AddLine(new Vector2(box.X + box.Width, box.Y + box.Height), boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
-                }
+					ImDrawListPtr draw = ImGui.GetForegroundDrawList();
+
+					draw.AddLine(playerMiddle, boxMiddle, ImGui.ColorConvertFloat4ToU32(new Vector4(0, 1, 0, 1)));
+					draw.AddLine(new Vector2(box.X, box.Y) + Screenshake.ShakeOffset, boxMiddle + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
+					draw.AddLine(new Vector2(box.X, box.Y + box.Height) + Screenshake.ShakeOffset, boxMiddle + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
+					draw.AddLine(new Vector2(box.X + box.Width, box.Y) + Screenshake.ShakeOffset, boxMiddle + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
+					draw.AddLine(new Vector2(box.X + box.Width, box.Y + box.Height) + Screenshake.ShakeOffset, boxMiddle + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 0, 1)));
+				}
 #endif
 
                 //Left

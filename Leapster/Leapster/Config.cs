@@ -1,8 +1,28 @@
-﻿namespace Leapster;
+﻿using Newtonsoft.Json;
+using System.Drawing;
 
-internal static class Config
+namespace Leapster;
+
+public class Config
 {
-    public static float Gravity = 980.0f;
-    public static float TimeScale = 1.0f;
-    public static bool DebugMode = false;
+	public static string ConfigPath => Path.GetFullPath("./config.json");
+
+	public Size Resolution = new(1280, 720);
+	public bool FpsOverlay;
+	public string LevelsFolder = Path.GetFullPath("./Levels/");
+
+#if DEBUG
+	public bool DebugMode;
+#endif
+
+	public static Config LoadConfig()
+	{
+		return JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigPath));
+	}
+
+	public void SaveConfig()
+	{
+		File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+	}
+
 }

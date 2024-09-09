@@ -12,10 +12,10 @@ public class GameScreen : IScreen
 {
     public event Action OnRender = delegate { };
 
-    public bool FPSOverlay = false;
-
     public List<GameObject> gameObjects = [];
 
+    public float Gravity;
+    public float TimeScale;
 
     public void Show()
     {
@@ -41,6 +41,9 @@ public class GameScreen : IScreen
 
     public void LoadLevel(EditorLevel level)
     {
+        Gravity = level.Gravity;
+        TimeScale = level.TimeScale;
+
         for (int i = 0; i < level.Objects.Count; i++)
         {
             EditorObject obj = level.Objects[i];
@@ -71,7 +74,7 @@ public class GameScreen : IScreen
 
     public void RenderImGui()
     {
-        if (FPSOverlay)
+        if (Game.Instance.Configuration.FpsOverlay)
         {
             ImGui.GetBackgroundDrawList().AddText(new Vector2(10, 10), Color.Lime.ToImGuiColor(), $"FPS: {ImGui.GetIO().Framerate:F2}");
         }

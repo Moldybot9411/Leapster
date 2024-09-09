@@ -15,6 +15,8 @@ public class Game : Application
 
 	public LevelSelectScreen LevelSelectScreen { get; private set; } = new LevelSelectScreen();
 
+	public Config Configuration { get; private set; }
+
 	public ImFontPtr BigFont { get; private set; }
 
     public Game()
@@ -62,6 +64,15 @@ public class Game : Application
 
     protected override void OnStart()
     {
+		try
+		{
+			Configuration = Config.LoadConfig();
+ 		} catch (Exception)
+		{
+			Configuration = new();
+			Configuration.SaveConfig();
+		}
+
 		ShowScreen(new MainmenuScreen());
     }
 
