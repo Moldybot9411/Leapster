@@ -34,7 +34,7 @@ public class Game : Application
 
 		ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableGamepad | ImGuiConfigFlags.DockingEnable;
 
-		ImGui.GetIO().NativePtr->IniFilename = null;
+		//ImGui.GetIO().NativePtr->IniFilename = null;
 
 		string assetsPath = typeof(Game).Namespace + ".Assets";
 		Assembly assembly = Assembly.GetExecutingAssembly();

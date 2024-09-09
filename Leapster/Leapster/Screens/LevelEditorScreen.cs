@@ -154,7 +154,7 @@ public class LevelEditorScreen : IScreen
             Vector2 topLeft = obj.ViewRect.Location.ToVector2();
             Vector2 bottomRight = topLeft + obj.ViewRect.Size.ToVector2();
 
-            if (!ImGui.Begin($"Box##{currentLevelRandom}##{i}", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoDocking))
+            if (!ImGui.Begin($"Box##{currentLevelRandom}##{i}", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoSavedSettings))
             {
                 ImGui.End();
                 continue;
