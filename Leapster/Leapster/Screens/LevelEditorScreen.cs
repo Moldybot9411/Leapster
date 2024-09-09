@@ -16,6 +16,7 @@ public class LevelEditorScreen : IScreen
     private string[] objectTypeNames;
 
     private Vector4 spawnColor = new(0, 0.5f, 0, 0.3f);
+    private Vector2 objectSpawnSize = new(100, 100);
 
     private string levelsFolder = "";
 
@@ -44,6 +45,16 @@ public class LevelEditorScreen : IScreen
         currentLevelRandom = new Random().Next();
     }
 
+    private void SpawnBox(Vector2 position)
+    {
+        level.Objects.Add(new EditorObject()
+        {
+            ViewRect = new RectangleF(new PointF(position), new SizeF(objectSpawnSize)),
+            Color = spawnColor,
+            Type = (EditorObjectType)currentObjectType
+        });
+    }
+
     private void RenderLevelEditorWindow()
     {
         if (!ImGui.Begin("Level Editor"))
@@ -52,20 +63,61 @@ public class LevelEditorScreen : IScreen
             return;
         }
 
+        if (ImGui.CollapsingHeader("Scene"))
+        {
+            for (int i = 0; i < level.Objects.Count; i++)
+            {
+                EditorObject obj = level.Objects[i];
+
+                if (!ImGui.TreeNode($"({i}) {Enum.GetName(obj.Type)}"))
+                    continue;
+
+                // TODO: Add position sliders
+
+                string popupName = $"ColorEdit##{i}";
+                if (ImGui.Button("Edit color"))
+                {
+                    ImGui.OpenPopup(popupName);
+                }
+
+                if (ImGui.BeginPopup(popupName))
+                {
+                    ImGui.ColorPicker4("Color", ref obj.Color);
+                    ImGui.EndPopup();
+                }
+
+                if (ImGui.Button("Delete"))
+                {
+                    level.Objects.RemoveAt(i);
+                }
+
+                ImGui.TreePop();
+            }
+        }
+
         if (ImGui.CollapsingHeader("Spawn##Header"))
         {
             ImGui.Combo("Type", ref currentObjectType, objectTypeNames, objectTypeNames.Length);
-            ImGui.ColorPicker4("Color", ref spawnColor);
+
+            string popupName = "SpawnColorPicker";
+            if (ImGui.Button("Edit Color"))
+            {
+                ImGui.OpenPopup(popupName);
+            }
+
+            if (ImGui.BeginPopup(popupName))
+            {
+                ImGui.ColorPicker4("Color", ref spawnColor);
+                ImGui.EndPopup();
+            }
 
             if (ImGui.Button("Spawn"))
             {
-                level.Objects.Add(new EditorObject()
-                {
-                    ViewRect = new RectangleF(10, 10, 100, 100),
-                    Color = spawnColor,
-                    Type = (EditorObjectType)currentObjectType
-                });
+                SpawnBox(new Vector2(10, 10));
             }
+
+            ImGui.SameLine();
+            ImGuiExtensions.HelpMarker("You can also double click to spawn a box.");
         }
 
         if (ImGui.CollapsingHeader("Level Settings"))
@@ -147,6 +199,11 @@ public class LevelEditorScreen : IScreen
 
         PointF cursorPos = new(ImGui.GetIO().MousePos);
 
+        if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+        {
+            SpawnBox(ImGui.GetIO().MousePos);
+        }
+
         for (int i = 0; i < level.Objects.Count; i++)
         {
             EditorObject obj = level.Objects[i];
@@ -222,6 +279,8 @@ public class LevelEditorScreen : IScreen
 
             obj.ViewRect.Size = new SizeF(ImGui.GetWindowSize());
             obj.ViewRect.Location = new PointF(ImGui.GetWindowPos());
+            obj.CollisionRect = obj.ViewRect;
+
             level.Objects[i] = obj;
 
             ImGui.End();
