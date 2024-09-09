@@ -62,6 +62,7 @@ public class LevelSelectScreen : IScreen
             if (result.IsOk)
             {
                 levelsFolder = result.Path;
+                RescanLevelFolder();
             }
         }
         ImGui.SetItemTooltip("Open Levels folder");
@@ -96,7 +97,10 @@ public class LevelSelectScreen : IScreen
 
                 ImGui.TableNextColumn();
 
-                ImGui.Button("Play");
+                if (ImGui.Button($"Play##{i}"))
+                {
+                    Console.WriteLine(levelPaths[i].ToString());
+                }
             }
 
             ImGui.EndTable();
