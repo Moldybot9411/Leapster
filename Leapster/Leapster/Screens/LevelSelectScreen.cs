@@ -65,11 +65,18 @@ public class LevelSelectScreen : IScreen
         ImGui.InputText("Levels folder", ref levelsFolder, 1000);
 
         ImGui.SameLine();
-        if (ImGui.Button(FontAwesome6.Spinner))
+        if (ImGui.Button(FontAwesome6.Retweet))
         {
             RescanLevelFolder();
         }
         ImGui.SetItemTooltip("Rescan Folder");
+
+        ImGui.SameLine();
+        if (ImGui.Button(FontAwesome6.Cannabis))
+        {
+            Game.Instance.ShowScreen(Game.Instance.MainmenuScreen);
+        }
+        ImGui.SetItemTooltip("Back to Main Menu");
 
         if (ImGui.BeginTable("Levels", 3, ImGuiTableFlags.Borders | ImGuiTableFlags.Resizable))
         {

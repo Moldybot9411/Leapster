@@ -11,6 +11,8 @@ public class Game : Application
 	public IScreen CurrentScreen { get; private set; } = null;
 	public GameScreen GameScreen { get; private set; } = new GameScreen();
 
+	public MainmenuScreen MainmenuScreen { get; private set; } = new MainmenuScreen();
+
 	public LevelSelectScreen LevelSelectScreen { get; private set; } = new LevelSelectScreen();
 
 	public ImFontPtr BigFont { get; private set; }
