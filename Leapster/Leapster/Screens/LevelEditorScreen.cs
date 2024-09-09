@@ -15,7 +15,7 @@ public class LevelEditorScreen : IScreen
     private int currentObjectType = 0;
     private string[] objectTypeNames;
 
-    private Vector4 spawnColor = new(0, 0.5f, 0, 0.3f);
+    private Vector4 spawnColor = new(1f, 1f, 1f, 1f);
     private Vector2 objectSpawnSize = new(100, 100);
 
     private string levelsFolder = "";

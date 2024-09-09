@@ -1,17 +1,12 @@
-﻿using System.Numerics;
-using ImGuiNET;
+﻿using ImGuiNET;
 using System.Reflection;
 using Leapster.Screens;
-using Leapster.ParticleSystem;
 
 namespace Leapster;
 
 public class Game : Application
 {
 	public static Game Instance { get; private set; }
-
-	public Level CurrentLevel { get; private set; }
-	public List<Level> AvailableLevels { get; private set; } = Levels.AllLevels;
 
 	public IScreen CurrentScreen { get; private set; } = null;
 	public GameScreen GameScreen { get; private set; } = new GameScreen();
@@ -60,25 +55,11 @@ public class Game : Application
     protected override void OnStart()
     {
 		ShowScreen(new MainmenuScreen());
-		LoadLevel(0);
     }
 
 	public void StopGame()
 	{
 		Running = false;
-	}
-
-	public void LoadLevel(int index)
-	{
-		LoadLevel(AvailableLevels[index]);
-	}
-
-	private void LoadLevel(Level level)
-	{
-		CurrentLevel?.OnUnload();
-
-		CurrentLevel = level;
-		CurrentLevel.OnLoad();
 	}
 
 	public void ShowScreen(IScreen screen)

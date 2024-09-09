@@ -28,4 +28,10 @@
 	    <HintPath>..\deps\ImGui.NET.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="Levels\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 </Project>

@@ -1,7 +1,9 @@
 ﻿using ImGuiNET;
 using Leapster.Components;
+using Leapster.LevelEditor;
 using Leapster.ObjectSystem;
 using Leapster.ParticleSystem;
+using Newtonsoft.Json;
 using System.Drawing;
 using System.Numerics;
 
@@ -15,6 +17,7 @@ public class GameScreen : IScreen
 
     public List<GameObject> gameObjects = [];
 
+
     public void Show()
     {
         Game.Instance.clearColor = Color.FromArgb(255, 115, 140, 153);
@@ -23,13 +26,49 @@ public class GameScreen : IScreen
         //player.AddComponent(new RigidBody());
         player.AddComponent(new CharacterController());
         player.AddComponent(new H());
-        player.AddComponent(new Particly(new(50, 50)));
 
         gameObjects.Add(player);
     }
 
     public void Hide()
     {
+    }
+
+    public void LoadLevel(string levelFile)
+    {
+        string content = File.ReadAllText(levelFile);
+        EditorLevel level = JsonConvert.DeserializeObject<EditorLevel>(content);
+        LoadLevel(level);
+    }
+
+    public void LoadLevel(EditorLevel level)
+    {
+        for (int i = 0; i < level.Objects.Count; i++)
+        {
+            EditorObject obj = level.Objects[i];
+            GameObject gameObject = new GameObject(obj.ViewRect, $"({i}) {Enum.GetName(obj.Type)}");
+
+            switch (obj.Type)
+            {
+                case EditorObjectType.Box:
+                    gameObject.AddComponent(new Box()
+                    {
+                        Color = obj.Color
+                    });
+                    gameObject.AddComponent(new H());
+                    break;
+
+                case EditorObjectType.Spike:
+                    gameObject.AddComponent(new Spike()
+                    {
+                        Color = obj.Color
+                    });
+                    gameObject.AddComponent(new H());
+                    break;
+            }
+
+            gameObjects.Add(gameObject);
+        }
     }
 
     public void RenderImGui()
