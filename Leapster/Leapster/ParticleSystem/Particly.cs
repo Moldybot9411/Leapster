@@ -7,17 +7,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using Leapster.ObjectSystem;
 
 namespace Leapster.ParticleSystem;
 
-public class Particly
-{
-    public int Amount = 5000;
-    public float InitialVelocityStrength = 150.0f;
+public class Particly : Component 
+{ 
+    public int Amount = 100;
+    public float InitialVelocityStrength = 1500.0f;
     public Vector2 Position = new(50, 50);
-    public Vector4 Color = new(0.8f, 0.8f, 0.8f, 1);
+    public Vector4 Color = new(1, 1, 0, 1);
     public float StartSize = 2.0f;
-    public float LifeTime = 0.5f;
+    public float LifeTime = 0.05f;
 
     private List<Particle> existingParticles = new List<Particle>();
 
@@ -29,7 +30,7 @@ public class Particly
         Game.Instance.GameScreen.OnRender += Render;
     }
 
-    public void Start()
+    public override void Start()
     {
         for(int i = 0; i < Amount; i++)
         {
@@ -56,6 +57,7 @@ public class Particly
         if (allParticlesDead)
         {
             existingParticles.Clear();
+            Start();
         }
     }
 

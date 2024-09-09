@@ -11,10 +11,6 @@ public class Game : Application
 {
 	public static Game Instance { get; private set; }
 
-	public Player Player { get; private set; }
-
-	public Particly Particly { get; private set; }
-
 	public Level CurrentLevel { get; private set; }
 	public List<Level> AvailableLevels { get; private set; } = Levels.AllLevels;
 
@@ -62,9 +58,6 @@ public class Game : Application
 
     protected override void OnStart()
     {
-		Player = new();
-		Particly = new(new Vector2(50, 50));
-
 		ShowScreen(new MainmenuScreen());
 		LoadLevel(0);
     }
@@ -85,9 +78,6 @@ public class Game : Application
 
 		CurrentLevel = level;
 		CurrentLevel.OnLoad();
-
-		Player.position = CurrentLevel.PlayerSpawn;
-		Player.Velocity = Vector2.Zero;
 	}
 
 	public void ShowScreen(Screen screen)
