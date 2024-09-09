@@ -4,22 +4,22 @@ using System.Numerics;
 
 namespace Leapster.Screens;
 
-public class GameScreen : Screen
+public class GameScreen : IScreen
 {
     public event Action OnRender = delegate { };
 
     public bool FPSOverlay = false;
 
-    public override void Show()
+    public void Show()
     {
         Game.Instance.clearColor = Color.FromArgb(255, 115, 140, 153);
     }
 
-    public override void Hide()
+    public void Hide()
     {
     }
 
-    public override void RenderImGui()
+    public void RenderImGui()
     {
         if (FPSOverlay)
         {

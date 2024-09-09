@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Leapster.Screens;
 
-public class LevelEditorScreen : Screen
+public class LevelEditorScreen : IScreen
 {
     private EditorLevel level;
 
@@ -21,7 +21,7 @@ public class LevelEditorScreen : Screen
 
     private float gravity;
 
-    public override void Show()
+    public void Show()
     {
         Game.Instance.clearColor = Color.FromArgb(255, 115, 140, 153);
         objectTypeNames = Enum.GetNames<EditorObjectType>();
@@ -29,7 +29,7 @@ public class LevelEditorScreen : Screen
         LoadLevel(new());
     }
 
-    public override void Hide()
+    public void Hide()
     {
     }
 
@@ -128,7 +128,7 @@ public class LevelEditorScreen : Screen
         ImGui.End();
     }
 
-    public override void RenderImGui()
+    public void RenderImGui()
     {
         RenderLevelEditorWindow();
 

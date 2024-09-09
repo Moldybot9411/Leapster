@@ -17,7 +17,7 @@ public class Game : Application
 	public Level CurrentLevel { get; private set; }
 	public List<Level> AvailableLevels { get; private set; } = Levels.AllLevels;
 
-	public Screen CurrentScreen { get; private set; } = null;
+	public IScreen CurrentScreen { get; private set; } = null;
 	public GameScreen GameScreen { get; private set; } = new GameScreen();
 
 	public ImFontPtr BigFont { get; private set; }
@@ -89,7 +89,7 @@ public class Game : Application
 		Player.Velocity = Vector2.Zero;
 	}
 
-	public void ShowScreen(Screen screen)
+	public void ShowScreen(IScreen screen)
 	{
 		CurrentScreen?.Hide();
 

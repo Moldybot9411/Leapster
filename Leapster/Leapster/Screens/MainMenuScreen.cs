@@ -4,21 +4,21 @@ using System.Numerics;
 
 namespace Leapster.Screens;
 
-public class MainmenuScreen : Screen
+public class MainmenuScreen : IScreen
 {
     private bool inOptionsWindow = false;
 
     private Vector2 childSize = Vector2.Zero;
     private int[] resolutionInput = [0, 0];
 
-    public unsafe override void Show()
+    public unsafe void Show()
     {
         Game.Instance.SdlInstance.GetWindowSize(Game.Instance.ApplicationWindow, ref resolutionInput[0], ref resolutionInput[1]);
 
         Game.Instance.clearColor = Color.FromArgb(240, 40, 15, 15);
     }
 
-    public override void Hide()
+    public void Hide()
     {
     }
 
@@ -45,7 +45,7 @@ public class MainmenuScreen : Screen
         ImGui.End();
     }
 
-    public override void RenderImGui()
+    public void RenderImGui()
     {
         ImGui.Begin("test",
             ImGuiWindowFlags.NoMove |
