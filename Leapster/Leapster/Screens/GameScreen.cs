@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using Leapster.Components;
 using Leapster.ObjectSystem;
+using Leapster.ParticleSystem;
 using System.Drawing;
 using System.Numerics;
 
@@ -19,8 +20,10 @@ public class GameScreen : Screen
         Game.Instance.clearColor = Color.FromArgb(255, 115, 140, 153);
 
         GameObject player = new(new RectangleF(200, 50, 20, 40), "Player");
-        player.AddComponent(new RigidBody());
+        //player.AddComponent(new RigidBody());
+        player.AddComponent(new CharacterController());
         player.AddComponent(new H());
+        player.AddComponent(new Particly(new(50, 50)));
 
         gameObjects.Add(player);
     }

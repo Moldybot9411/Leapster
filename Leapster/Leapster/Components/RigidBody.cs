@@ -13,9 +13,9 @@ namespace Leapster.Components;
 public class RigidBody : Component
 {
     public bool IsGrounded { get; private set; }
+    public Vector2 Velocity = new();
 
     private RectangleF rect;
-    private Vector2 velocity = new();
 
     public override void Start()
     {
@@ -27,10 +27,13 @@ public class RigidBody : Component
         rect = AssignedObject.Rect;
         CheckCollisions();
 
-        //Gravity
-        velocity.Y += Config.Gravity * ImGui.GetIO().DeltaTime * Config.TimeScale;
 
-        rect.Y += velocity.Y * ImGui.GetIO().DeltaTime;
+        //Gravity
+        Velocity.Y += Config.Gravity * ImGui.GetIO().DeltaTime * Config.TimeScale;
+
+
+        rect.Y += Velocity.Y * ImGui.GetIO().DeltaTime;
+        rect.X += Velocity.X * ImGui.GetIO().DeltaTime;
 
         Vector2 tl = new(rect.X, rect.Y);
         Vector2 br = new(rect.X + rect.Width, rect.Y + rect.Height);
@@ -72,14 +75,14 @@ public class RigidBody : Component
                 //Left
                 if ((angleBoxToPlayer < angleTopLeft && angleBoxToPlayer > -Math.PI) || (angleBoxToPlayer > angleBottomLeft && angleBoxToPlayer < Math.PI))
                 {
-                    velocity.X = 0;
+                    Velocity.X = 0;
                     rect.X = Box.X - rect.Width;
                 }
 
                 //Top
                 if (angleBoxToPlayer > angleTopLeft && angleBoxToPlayer < angleTopRight)
                 {
-                    velocity.Y = 0;
+                    Velocity.Y = 0;
                     rect.Y = Box.Y - rect.Height;
                     IsGrounded = true;
                 }
@@ -87,14 +90,14 @@ public class RigidBody : Component
                 //Right
                 if ((angleBoxToPlayer > angleTopRight && angleBoxToPlayer < 0) || (angleBoxToPlayer > 0 && angleBoxToPlayer < angleBottomRight))
                 {
-                    velocity.X = 0;
+                    Velocity.X = 0;
                     rect.X = Box.X + Box.Z;
                 }
 
                 //Bottom
                 if (angleBoxToPlayer < angleBottomLeft && angleBoxToPlayer > angleBottomRight)
                 {
-                    velocity.Y = 0;
+                    Velocity.Y = 0;
                     rect.Y = Box.Y + Box.W + 0.1f;
                 }
             }
