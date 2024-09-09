@@ -27,7 +27,6 @@ public class LevelSelectScreen : IScreen
 
     public void Hide()
     {
-        throw new NotImplementedException();
     }
 
     public void RenderImGui()
@@ -99,7 +98,8 @@ public class LevelSelectScreen : IScreen
 
                 if (ImGui.Button($"Play##{i}"))
                 {
-                    Console.WriteLine(levelPaths[i].ToString());
+                    Game.Instance.ShowScreen(Game.Instance.GameScreen);
+                    Game.Instance.GameScreen.LoadLevel(levelPaths[i]);
                 }
             }
 
