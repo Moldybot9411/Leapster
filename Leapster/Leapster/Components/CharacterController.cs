@@ -1,51 +1,41 @@
 ﻿using ImGuiNET;
-using Leapster.ParticleSystem;
+using Leapster.ObjectSystem;
+using Silk.NET.SDL;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Leapster;
+namespace Leapster.Components;
 
-public class Player
+public class CharacterController : Component
 {
-    public Vector2 Velocity;
-    public float Speed = 250.0f;
+    //This script is basically a copy of the Rigidbody component, as it seemed impossible to add Controls in another component due to timing issues.
+    //This was the cleanest I could think of and I'm sorry :(
+
+    public float Speed = 250f;
     public float JumpForce = -350f;
-    public Vector2 position = new(50.0f, 50.0f);
+    public bool IsGrounded;
+    public Vector2 Velocity;
 
-    private Vector2 size = new(20.0f, 40.0f);
-    private int jumpBuffer = 150;
+    private bool jumpQueued;
+    private int jumpBuffer = 170;
+    private RectangleF rect;
 
-    private bool jumpQueued = false;
-    private bool isGrounded = false;
-
-    private Particly particles;
-
-    public Player()
+    public override void Start()
     {
-        Game.Instance.GameScreen.OnRender += OnRenderFrame;
+        rect = AssignedObject.Rect;
     }
 
-    private void OnRenderFrame()
+    public override void Update()
     {
+        rect = AssignedObject.Rect;
         CheckCollisions();
-        UpdatePosition();
 
-		Vector2 topLeft = position;
-		Vector2 bottomRight = topLeft + size;
-		Vector2 center = (topLeft + bottomRight) * 0.5f;
 
-		ImDrawListPtr draw = ImGui.GetBackgroundDrawList();
-		draw.AddRectFilled(topLeft + Screenshake.ShakeOffset, bottomRight + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 0, 0, 1)));
-
-		// Draw the centered "H"
-		ImGui.PushFont(Game.Instance.BigFont);
-		Vector2 textSize = ImGui.CalcTextSize("H");
-		Vector2 textPosition = center - textSize * 0.5f + Screenshake.ShakeOffset;
-		draw.AddText(textPosition, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 1, 1)), "H");
-		ImGui.PopFont();
-	}
-
-    private void UpdatePosition()
-    {
         //Gravity
         Velocity.Y += Config.Gravity * ImGui.GetIO().DeltaTime * Config.TimeScale;
 
@@ -57,7 +47,7 @@ public class Player
 
         if (ImGui.IsKeyDown(ImGuiKey.D) || ImGui.IsKeyDown(ImGuiKey.GamepadLStickRight))
         {
-            Velocity.X = Speed  * Config.TimeScale;
+            Velocity.X = Speed * Config.TimeScale;
         }
 
         //Lerping Speed to 0
@@ -71,33 +61,37 @@ public class Player
             JumpPressed();
         }
 
-        if(jumpQueued && isGrounded)
+        if (jumpQueued && IsGrounded)
         {
             Velocity.Y = JumpForce;
-            Screenshake.Shake(30f, 10f);
+            //Screenshake.Shake(30f, 10f);
 
-            particles = new(new Vector2(position.X + (size.X/2), position.Y + size.Y));
+            //particles = new(new Vector2(position.X + (size.X / 2), position.Y + size.Y));
 
             jumpQueued = false;
         }
 
+        rect.Y += Velocity.Y * ImGui.GetIO().DeltaTime;
+        rect.X += Velocity.X * ImGui.GetIO().DeltaTime;
 
-        //Updating Positions based on Velocity
-        position += Velocity * ImGui.GetIO().DeltaTime;
+        Vector2 tl = new(rect.X, rect.Y);
+        Vector2 br = new(rect.X + rect.Width, rect.Y + rect.Height);
+
+        AssignedObject.Rect = rect;
+        ImGui.GetBackgroundDrawList().AddRectFilled(tl + Screenshake.ShakeOffset, br + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new(1, 0, 0, 1)));
     }
 
     private void CheckCollisions()
     {
         //Set to true when Player stood on any surface during the Frame
-        isGrounded = false;
+        IsGrounded = false;
 
         foreach (Vector4 Box in Game.Instance.CurrentLevel.Boxes)
         {
-            if(Colliding(Box))
+            if (Colliding(Box))
             {
-                Vector2 playerMiddle = new(position.X + (size.X / 2), position.Y + (size.Y / 2));
+                Vector2 playerMiddle = new(rect.X + (rect.Width / 2), rect.Y + (rect.Height / 2));
                 Vector2 boxMiddle = new(Box.X + (Box.Z / 2), Box.Y + (Box.W / 2));
-
                 float angleBoxToPlayer = MathF.Atan2(playerMiddle.Y - boxMiddle.Y, playerMiddle.X - boxMiddle.X);
 
                 float angleTopLeft = (float)Math.Atan2(Box.Y - boxMiddle.Y, Box.X - boxMiddle.X);
@@ -120,54 +114,48 @@ public class Player
                 if ((angleBoxToPlayer < angleTopLeft && angleBoxToPlayer > -Math.PI) || (angleBoxToPlayer > angleBottomLeft && angleBoxToPlayer < Math.PI))
                 {
                     Velocity.X = 0;
-                    position.X = Box.X - size.X;
+                    rect.X = Box.X - rect.Width;
                 }
 
                 //Top
                 if (angleBoxToPlayer > angleTopLeft && angleBoxToPlayer < angleTopRight)
                 {
                     Velocity.Y = 0;
-                    position.Y = Box.Y - size.Y;
-                    isGrounded = true;
+                    rect.Y = Box.Y - rect.Height;
+                    IsGrounded = true;
                 }
 
                 //Right
                 if ((angleBoxToPlayer > angleTopRight && angleBoxToPlayer < 0) || (angleBoxToPlayer > 0 && angleBoxToPlayer < angleBottomRight))
                 {
                     Velocity.X = 0;
-                    position.X = Box.X + Box.Z;
+                    rect.X = Box.X + Box.Z;
                 }
 
                 //Bottom
                 if (angleBoxToPlayer < angleBottomLeft && angleBoxToPlayer > angleBottomRight)
                 {
                     Velocity.Y = 0;
-                    position.Y = Box.Y + Box.W + 0.1f;
+                    rect.Y = Box.Y + Box.W + 0.1f;
                 }
             }
         }
+    }
+
+    private bool Colliding(Vector4 box)
+    {
+        Vector4 rightEdge = new(rect.X + rect.Width, rect.Y, rect.X + rect.Width, rect.Y + rect.Height);
+        Vector4 leftEdge = new(rect.X, rect.Y, rect.X, rect.Y + rect.Height);
+        Vector4 topEdge = new(rect.X, rect.Y, rect.X + rect.Width, rect.Y);
+        Vector4 bottomEdge = new(rect.X, rect.Y + rect.Height, rect.X + rect.Width, rect.Y + rect.Height);
+        bool colliding = rightEdge.X > box.X && leftEdge.X < box.X + box.Z && bottomEdge.Y > box.Y && topEdge.Y < box.Y + box.W;
+
+        return colliding;
     }
 
     private async void JumpPressed()
     {
         await Task.Delay(jumpBuffer);
         jumpQueued = false;
-    }
-
-    private bool Colliding(Vector4 box)
-    {
-        Vector4 rightEdge = new(position.X + size.X, position.Y, position.X + size.X, position.Y + size.Y);
-        Vector4 leftEdge = new(position.X, position.Y, position.X, position.Y + size.Y);
-        Vector4 topEdge = new(position.X, position.Y, position.X + size.X, position.Y);
-        Vector4 bottomEdge = new(position.X, position.Y + size.Y, position.X + size.X, position.Y + size.Y);
-
-        if (rightEdge.X > box.X && leftEdge.X < box.X + box.Z && bottomEdge.Y > box.Y && topEdge.Y < box.Y + box.W)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 }
