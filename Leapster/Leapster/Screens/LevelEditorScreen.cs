@@ -1,7 +1,6 @@
 ﻿using ImGuiNET;
 using System.Drawing;
 using System.Numerics;
-using System.Runtime.InteropServices;
 
 namespace Leapster.Screens;
 
@@ -48,7 +47,6 @@ public class LevelEditorScreen : Screen
 
         ImGui.End();
     }
-    private bool dragging = false;
 
     public override void RenderImGui()
     {
@@ -59,6 +57,8 @@ public class LevelEditorScreen : Screen
         ImGui.PushStyleColor(ImGuiCol.ResizeGrip, Color.Red.ToImGuiColor());
         ImGui.PushStyleColor(ImGuiCol.Button, Color.Blue.ToImGuiColor());
 
+        PointF cursorPos = new(ImGui.GetIO().MousePos);
+
         for (int i = 0; i < boxes.Count; i++)
         {
             Box box = boxes[i];
@@ -66,16 +66,25 @@ public class LevelEditorScreen : Screen
             Vector2 topLeft = box.Rect.Location.ToVector2();
             Vector2 bottomRight = topLeft + box.Rect.Size.ToVector2();
 
-            ImGui.Begin($"Box##{i}", ImGuiWindowFlags.NoTitleBar);
+            if (!ImGui.Begin($"Box##{i}", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoScrollbar))
+            {
+                ImGui.End();
+                continue;
+            }    
 
             ImGui.GetWindowDrawList().AddRectFilled(topLeft, bottomRight, box.Color.ToImguiColor());
 
-            if (ImGui.IsWindowHovered() && ImGui.Button(FontAwesome6.PaintRoller))
+            string popupName = $"BoxColor##{i}";
+
+            if (box.Rect.Contains(cursorPos) || ImGui.IsPopupOpen(popupName))
             {
-                ImGui.OpenPopup($"BoxColor##{i}");
+                if (ImGui.Button($"{FontAwesome6.PaintRoller}##{i}"))
+                {
+                    ImGui.OpenPopup(popupName);
+                }
             }
 
-            if (ImGui.BeginPopup($"BoxColor##{i}"))
+            if (ImGui.BeginPopup(popupName))
             {
                 ImGui.ColorPicker4("Box color", ref box.Color);
 
@@ -88,8 +97,6 @@ public class LevelEditorScreen : Screen
             box.Rect.Size = new SizeF(ImGui.GetWindowSize());
             box.Rect.Location = new PointF(ImGui.GetWindowPos());
             boxes[i] = box;
-
-            dragging = (ImGui.IsWindowFocused() || ImGui.IsWindowHovered()) && ImGui.IsMouseDragging(ImGuiMouseButton.Left) && ImGui.IsMousePosValid();
 
             ImGui.End();
         }
