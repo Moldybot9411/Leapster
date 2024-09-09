@@ -76,9 +76,9 @@ public class MainmenuScreen : IScreen
 
             ImGui.Dummy(new Vector2(0.0f, 100.0f));
 
-            if (ImGui.Button("Start", buttonSize))
+            if (ImGui.Button("Level Select", buttonSize))
             {
-                Game.Instance.ShowScreen(Game.Instance.GameScreen);
+                Game.Instance.ShowScreen(Game.Instance.LevelSelectScreen);
             }
 
             if (ImGui.Button("Options", buttonSize))

@@ -11,6 +11,8 @@ public class Game : Application
 	public IScreen CurrentScreen { get; private set; } = null;
 	public GameScreen GameScreen { get; private set; } = new GameScreen();
 
+	public LevelSelectScreen LevelSelectScreen { get; private set; } = new LevelSelectScreen();
+
 	public ImFontPtr BigFont { get; private set; }
 
     public Game()
@@ -49,7 +51,11 @@ public class Game : Application
 		ImFontPtr second = fonts.LoadIconFontFromResources(assetsPath + ".FontAwesome." + FontAwesome6.FontIconFileNameFAS, assembly, iconFontSize, fontAwesomeRange);
 
 		BigFont = fonts.LoadFontFromResources(assetsPath + ".Roboto.Roboto-Regular.ttf", assembly, baseFontSize * 2);
-		fonts.Build();
+
+		fonts.LoadIconFontFromResources(assetsPath + ".FontAwesome." + FontAwesome6.FontIconFileNameFAR, assembly, iconFontSize * 1.5f, fontAwesomeRange);
+        fonts.LoadIconFontFromResources(assetsPath + ".FontAwesome." + FontAwesome6.FontIconFileNameFAS, assembly, iconFontSize * 1.5f, fontAwesomeRange);
+
+        fonts.Build();
 	}
 
     protected override void OnStart()
