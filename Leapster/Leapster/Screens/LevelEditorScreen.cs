@@ -201,7 +201,8 @@ public class LevelEditorScreen : IScreen
 
         if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
         {
-            SpawnBox(ImGui.GetIO().MousePos);
+            Vector2 spawnPos = ImGui.GetIO().MousePos - objectSpawnSize / 2;
+            SpawnBox(spawnPos);
         }
 
         for (int i = 0; i < level.Objects.Count; i++)

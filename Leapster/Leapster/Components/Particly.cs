@@ -1,15 +1,8 @@
 ﻿using ImGuiNET;
 using System.Numerics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Http.Headers;
-using System.Security.Cryptography;
 using Leapster.ObjectSystem;
 
-namespace Leapster.ParticleSystem;
+namespace Leapster.Components;
 
 public class Particly : Component 
 { 
