@@ -90,4 +90,15 @@ public static class ImGuiExtensions
 		}
 	}
 
+    public static void HelpMarker(string description)
+    {
+        ImGui.TextDisabled(FontAwesome6.CircleQuestion);
+        if (ImGui.BeginItemTooltip())
+        {
+            ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
+            ImGui.TextUnformatted(description);
+            ImGui.PopTextWrapPos();
+            ImGui.EndTooltip();
+        }
+    }
 }

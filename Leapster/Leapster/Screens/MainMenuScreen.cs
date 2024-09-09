@@ -47,7 +47,14 @@ public class MainmenuScreen : Screen
 
     public override void RenderImGui()
     {
-        ImGui.Begin("test", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoInputs);
+        ImGui.Begin("test",
+            ImGuiWindowFlags.NoMove |
+            ImGuiWindowFlags.NoTitleBar |
+            ImGuiWindowFlags.NoResize |
+            ImGuiWindowFlags.NoCollapse |
+            ImGuiWindowFlags.NoBackground |
+            ImGuiWindowFlags.NoInputs | 
+            ImGuiWindowFlags.NoDocking);
 
         Vector2 parentSize = ImGui.GetWindowSize();
 

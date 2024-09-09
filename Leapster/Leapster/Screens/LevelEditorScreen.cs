@@ -1,33 +1,42 @@
 ﻿using ImGuiNET;
+using Leapster.LevelEditor;
+using NativeFileDialogSharp;
+using Newtonsoft.Json;
 using System.Drawing;
 using System.Numerics;
+using System.Reflection;
 
 namespace Leapster.Screens;
 
 public class LevelEditorScreen : Screen
 {
+    private EditorLevel level;
 
-    private class Box
-    {
-        public RectangleF Rect;
-        public Vector4 Color;
+    private int currentObjectType = 0;
+    private string[] objectTypeNames;
 
-        public Box(RectangleF rect, Vector4 color)
-        {
-            Rect = rect;
-            Color = color;
-        }
-    }
+    private Vector4 spawnColor = new(0, 0.5f, 0, 0.3f);
 
-    private List<Box> boxes = [];
+    private string levelsFolder = "";
+
+    private float gravity;
 
     public override void Show()
     {
         Game.Instance.clearColor = Color.FromArgb(255, 115, 140, 153);
+        objectTypeNames = Enum.GetNames<EditorObjectType>();
+
+        LoadLevel(new());
     }
 
     public override void Hide()
     {
+    }
+
+    private void LoadLevel(EditorLevel level)
+    {
+        gravity = level.Gravity / 100;
+        this.level = level;
     }
 
     private void RenderLevelEditorWindow()
@@ -38,9 +47,80 @@ public class LevelEditorScreen : Screen
             return;
         }
 
-        if (ImGui.Button("Spawn"))
+        if (ImGui.CollapsingHeader("Spawn##Header"))
         {
-            boxes.Add(new(new RectangleF(10, 10, 100, 100), new Vector4(1, 0, 0, 1)));
+            ImGui.Combo("Type", ref currentObjectType, objectTypeNames, objectTypeNames.Length);
+            ImGui.ColorPicker4("Color", ref spawnColor);
+
+            if (ImGui.Button("Spawn"))
+            {
+                level.Objects.Add(new EditorObject()
+                {
+                    ViewRect = new RectangleF(10, 10, 100, 100),
+                    Color = spawnColor,
+                    Type = (EditorObjectType)currentObjectType
+                });
+            }
+        }
+
+        if (ImGui.CollapsingHeader("Level Settings"))
+        {
+            ImGui.InputText("Name", ref level.Name, 100);
+
+            if (ImGui.SliderFloat("Gravity", ref gravity, 0, 20))
+            {
+                level.Gravity = gravity * 100;
+            }
+
+            ImGui.SliderFloat("Time scale", ref level.TimeScale, 0, 4);
+        }
+
+        if (ImGui.CollapsingHeader("Save/Load"))
+        {
+
+            // Open folder save path
+            if (ImGui.Button(FontAwesome6.FolderOpen))
+            {
+                string currentPath = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.FullName;
+                DialogResult result = Dialog.FolderPicker(currentPath);
+
+                if (result.IsOk)
+                {
+                    levelsFolder = result.Path;
+                }
+            }
+            ImGui.SetItemTooltip("Open Levels folder");
+
+            ImGui.SameLine();
+            ImGui.InputText("Levels folder", ref levelsFolder, 1000);
+
+            // Save Level
+            if (ImGui.Button(FontAwesome6.FloppyDisk))
+            {
+                string legalName = string.Join("_", level.Name.Split(Path.GetInvalidFileNameChars()));
+                string fileName = Path.Combine(levelsFolder, legalName + ".json");
+
+                File.WriteAllText(fileName, JsonConvert.SerializeObject(level, Formatting.Indented));
+            }
+            ImGui.SetItemTooltip("Save the current level");
+
+            ImGui.SameLine();
+
+            // Load Level
+            if (ImGui.Button(FontAwesome6.FolderPlus))
+            {
+                DialogResult result = Dialog.FileOpen("json", levelsFolder);
+
+                if (result.IsOk)
+                {
+                    string contents = File.ReadAllText(result.Path);
+
+                    EditorLevel loadedLevel = JsonConvert.DeserializeObject<EditorLevel>(contents);
+                    LoadLevel(loadedLevel);
+                }
+
+            }
+            ImGui.SetItemTooltip("Load a level");
         }
 
         ImGui.SetWindowSize(Vector2.Zero, ImGuiCond.Once);
@@ -59,24 +139,42 @@ public class LevelEditorScreen : Screen
 
         PointF cursorPos = new(ImGui.GetIO().MousePos);
 
-        for (int i = 0; i < boxes.Count; i++)
+        for (int i = 0; i < level.Objects.Count; i++)
         {
-            Box box = boxes[i];
+            EditorObject obj = level.Objects[i];
 
-            Vector2 topLeft = box.Rect.Location.ToVector2();
-            Vector2 bottomRight = topLeft + box.Rect.Size.ToVector2();
+            Vector2 topLeft = obj.ViewRect.Location.ToVector2();
+            Vector2 bottomRight = topLeft + obj.ViewRect.Size.ToVector2();
 
-            if (!ImGui.Begin($"Box##{i}", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoScrollbar))
+            if (!ImGui.Begin($"Box##{i}", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoDocking))
             {
                 ImGui.End();
                 continue;
-            }    
+            }
 
-            ImGui.GetWindowDrawList().AddRectFilled(topLeft, bottomRight, box.Color.ToImguiColor());
+            ImDrawListPtr draw = ImGui.GetBackgroundDrawList();
+
+            switch (obj.Type)
+            {
+                case EditorObjectType.Box:
+                    draw.AddRectFilled(topLeft, bottomRight, obj.Color.ToImguiColor());
+                    break;
+
+                case EditorObjectType.Spike:
+                {
+                    RectangleF rect = obj.ViewRect;
+                    Vector2 p0 = new(rect.X + rect.Width / 2, rect.Y); // Top-center point of the rectangle
+                    Vector2 p1 = new(rect.X, rect.Y + rect.Height); // Bottom-left point of the rectangle
+                    Vector2 p2 = new(rect.X + rect.Width, rect.Y + rect.Height); // Bottom-right point of the rectangle
+                    
+                    draw.AddTriangleFilled(p0, p1, p2, obj.Color.ToImguiColor());
+                    break;
+                }
+            }
 
             string popupName = $"BoxColor##{i}";
 
-            if (box.Rect.Contains(cursorPos) || ImGui.IsPopupOpen(popupName))
+            if (obj.ViewRect.Contains(cursorPos) || ImGui.IsPopupOpen(popupName))
             {
                 if (ImGui.Button($"{FontAwesome6.PaintRoller}##{i}"))
                 {
@@ -86,17 +184,17 @@ public class LevelEditorScreen : Screen
 
             if (ImGui.BeginPopup(popupName))
             {
-                ImGui.ColorPicker4("Box color", ref box.Color);
+                ImGui.ColorPicker4("Box color", ref obj.Color);
 
                 ImGui.EndPopup();
             }
 
             ImGui.SetWindowPos(topLeft, ImGuiCond.Once);
-            ImGui.SetWindowSize(box.Rect.Size.ToVector2(), ImGuiCond.Once);
+            ImGui.SetWindowSize(obj.ViewRect.Size.ToVector2(), ImGuiCond.Once);
 
-            box.Rect.Size = new SizeF(ImGui.GetWindowSize());
-            box.Rect.Location = new PointF(ImGui.GetWindowPos());
-            boxes[i] = box;
+            obj.ViewRect.Size = new SizeF(ImGui.GetWindowSize());
+            obj.ViewRect.Location = new PointF(ImGui.GetWindowPos());
+            level.Objects[i] = obj;
 
             ImGui.End();
         }
