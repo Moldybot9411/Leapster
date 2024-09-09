@@ -188,6 +188,26 @@ public class LevelEditorScreen : IScreen
                 {
                     ImGui.OpenPopup(popupName);
                 }
+
+                ImGui.SameLine();
+
+                ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0.8f, 0.1f, 0.1f, 1.0f));
+                ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(1.0f, 0.2f, 0.2f, 1.0f));
+                ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0.6f, 0.05f, 0.05f, 1.0f));
+
+                bool delete = false;
+                if (ImGui.Button($"{FontAwesome6.TrashCan}##{i}"))
+                {
+                    delete = true;
+                }
+
+                ImGui.PopStyleColor(3);
+                if (delete)
+                {
+                    level.Objects.RemoveAt(i);
+                    ImGui.End();
+                    continue;
+                }
             }
 
             if (ImGui.BeginPopup(popupName))
