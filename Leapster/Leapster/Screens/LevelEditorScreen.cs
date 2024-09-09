@@ -21,6 +21,8 @@ public class LevelEditorScreen : IScreen
 
     private float gravity;
 
+    private int currentLevelRandom;
+
     public void Show()
     {
         Game.Instance.clearColor = Color.FromArgb(255, 115, 140, 153);
@@ -35,8 +37,11 @@ public class LevelEditorScreen : IScreen
 
     private void LoadLevel(EditorLevel level)
     {
+        this.level = null;
         gravity = level.Gravity / 100;
         this.level = level;
+
+        currentLevelRandom = new Random().Next();
     }
 
     private void RenderLevelEditorWindow()
@@ -132,6 +137,9 @@ public class LevelEditorScreen : IScreen
     {
         RenderLevelEditorWindow();
 
+        if (level == null)
+            return;
+
         ImGui.PushStyleColor(ImGuiCol.WindowBg, Color.Transparent.ToImGuiColor());
         ImGui.PushStyleColor(ImGuiCol.Border, Color.Black.ToImGuiColor());
         ImGui.PushStyleColor(ImGuiCol.ResizeGrip, Color.Red.ToImGuiColor());
@@ -146,7 +154,7 @@ public class LevelEditorScreen : IScreen
             Vector2 topLeft = obj.ViewRect.Location.ToVector2();
             Vector2 bottomRight = topLeft + obj.ViewRect.Size.ToVector2();
 
-            if (!ImGui.Begin($"Box##{i}", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoDocking))
+            if (!ImGui.Begin($"Box##{currentLevelRandom}##{i}", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoDocking))
             {
                 ImGui.End();
                 continue;
