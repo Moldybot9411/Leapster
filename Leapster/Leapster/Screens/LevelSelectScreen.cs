@@ -122,6 +122,7 @@ public class LevelSelectScreen : IScreen
 
         ImGui.PopFont();
 
+        ImGui.PopStyleColor(4);
         ImGui.PopStyleVar();
 
         ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
