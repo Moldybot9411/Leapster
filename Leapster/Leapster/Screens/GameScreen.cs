@@ -23,7 +23,6 @@ public class GameScreen : IScreen
         Game.Instance.clearColor = Color.FromArgb(255, 115, 140, 153);
 
         GameObject player = new(new RectangleF(200, 50, 20, 40), "Player");
-        //player.AddComponent(new RigidBody());
         player.AddComponent(new CharacterController());
         player.AddComponent(new H());
 
@@ -55,7 +54,7 @@ public class GameScreen : IScreen
                     {
                         Color = obj.Color
                     });
-                    gameObject.AddComponent(new H());
+                    //gameObject.AddComponent(new H());
                     break;
 
                 case EditorObjectType.Spike:

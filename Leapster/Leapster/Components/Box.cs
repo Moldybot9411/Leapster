@@ -16,7 +16,7 @@ public class Box : Component
         
         ImDrawListPtr draw = ImGui.GetBackgroundDrawList();
 
-        draw.AddRectFilled(topLeft, bottomRight, Color.ToImguiColor());
+        draw.AddRectFilled(topLeft + Screenshake.ShakeOffset, bottomRight + Screenshake.ShakeOffset, Color.ToImguiColor());
     }
 
 }

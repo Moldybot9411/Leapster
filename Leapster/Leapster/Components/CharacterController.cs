@@ -32,10 +32,7 @@ public class CharacterController : Component
 
     public override void Update()
     {
-        rect = AssignedObject.Rect;
         CheckCollisions();
-
-
         //Gravity
         Velocity.Y += Config.Gravity * ImGui.GetIO().DeltaTime * Config.TimeScale;
 
@@ -64,12 +61,11 @@ public class CharacterController : Component
         if (jumpQueued && IsGrounded)
         {
             Velocity.Y = JumpForce;
-            //Screenshake.Shake(30f, 10f);
-
-            //particles = new(new Vector2(position.X + (size.X / 2), position.Y + size.Y));
+            Screenshake.Shake(30f, 10f);
 
             jumpQueued = false;
         }
+
 
         rect.Y += Velocity.Y * ImGui.GetIO().DeltaTime;
         rect.X += Velocity.X * ImGui.GetIO().DeltaTime;
@@ -101,7 +97,7 @@ public class CharacterController : Component
                 float angleTopLeft = MathF.Atan2(box.Y - boxMiddle.Y, box.X - boxMiddle.X);
                 float angleBottomLeft = MathF.Atan2((box.Y + box.Height) - boxMiddle.Y, box.X - boxMiddle.X);
                 float angleTopRight = MathF.Atan2(box.Y - boxMiddle.Y, (box.X + box.Width) - boxMiddle.X);
-                float angleBottomRight = MathF.Atan2((box.Y + box.Width) - boxMiddle.Y, (box.X + box.Width) - boxMiddle.X);
+                float angleBottomRight = MathF.Atan2((box.Y + box.Height) - boxMiddle.Y, (box.X + box.Width) - boxMiddle.X);
 
 #if DEBUG
                 if (Config.DebugMode)
@@ -130,7 +126,7 @@ public class CharacterController : Component
                 }
 
                 //Right
-                if ((angleBoxToPlayer > angleTopRight && angleBoxToPlayer < 0) || (angleBoxToPlayer > 0 && angleBoxToPlayer < angleBottomRight))
+                if ((angleBoxToPlayer > angleTopRight && angleBoxToPlayer < 0f) || (angleBoxToPlayer > 0f && angleBoxToPlayer < angleBottomRight))
                 {
                     Velocity.X = 0;
                     rect.X = box.X + box.Width;
@@ -140,7 +136,7 @@ public class CharacterController : Component
                 if (angleBoxToPlayer < angleBottomLeft && angleBoxToPlayer > angleBottomRight)
                 {
                     Velocity.Y = 0;
-                    rect.Y = box.Y + box.Height + 0.1f;
+                    rect.Y = box.Y + box.Height;
                 }
             }
         }
@@ -152,6 +148,7 @@ public class CharacterController : Component
         Vector4 leftEdge = new(rect.X, rect.Y, rect.X, rect.Y + rect.Height);
         Vector4 topEdge = new(rect.X, rect.Y, rect.X + rect.Width, rect.Y);
         Vector4 bottomEdge = new(rect.X, rect.Y + rect.Height, rect.X + rect.Width, rect.Y + rect.Height);
+
         bool colliding = rightEdge.X > box.X && leftEdge.X < box.X + box.Z && bottomEdge.Y > box.Y && topEdge.Y < box.Y + box.W;
 
         return colliding;
