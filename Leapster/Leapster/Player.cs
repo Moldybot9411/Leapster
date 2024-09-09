@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Leapster.ParticleSystem;
 using System.Numerics;
 
 namespace Leapster;
@@ -15,6 +16,8 @@ public class Player
 
     private bool jumpQueued = false;
     private bool isGrounded = false;
+
+    private Particly particles;
 
     public Player()
     {
@@ -34,7 +37,7 @@ public class Player
 		draw.AddRectFilled(topLeft + Screenshake.ShakeOffset, bottomRight + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 0, 0, 1)));
 
 		// Draw the centered "H"
-		ImGui.PushFont(Game.Instance.BigFont); // Replace 'yourFont' with the font you want to use
+		ImGui.PushFont(Game.Instance.BigFont);
 		Vector2 textSize = ImGui.CalcTextSize("H");
 		Vector2 textPosition = center - textSize * 0.5f + Screenshake.ShakeOffset;
 		draw.AddText(textPosition, ImGui.ColorConvertFloat4ToU32(new Vector4(1, 1, 1, 1)), "H");
@@ -72,13 +75,15 @@ public class Player
         {
             Velocity.Y = JumpForce;
             Screenshake.Shake(30f, 10f);
+
+            particles = new(new Vector2(position.X + (size.X/2), position.Y + size.Y));
+
             jumpQueued = false;
         }
 
 
         //Updating Positions based on Velocity
-        position.Y += Velocity.Y * ImGui.GetIO().DeltaTime;
-        position.X += Velocity.X * ImGui.GetIO().DeltaTime;
+        position += Velocity * ImGui.GetIO().DeltaTime;
     }
 
     private void CheckCollisions()
@@ -93,7 +98,7 @@ public class Player
                 Vector2 playerMiddle = new(position.X + (size.X / 2), position.Y + (size.Y / 2));
                 Vector2 boxMiddle = new(Box.X + (Box.Z / 2), Box.Y + (Box.W / 2));
 
-                float angleBoxToPlayer = (float)Math.Atan2(playerMiddle.Y - boxMiddle.Y, playerMiddle.X - boxMiddle.X);
+                float angleBoxToPlayer = MathF.Atan2(playerMiddle.Y - boxMiddle.Y, playerMiddle.X - boxMiddle.X);
 
                 float angleTopLeft = (float)Math.Atan2(Box.Y - boxMiddle.Y, Box.X - boxMiddle.X);
                 float angleBottomLeft = (float)Math.Atan2((Box.Y + Box.W) - boxMiddle.Y, Box.X - boxMiddle.X);

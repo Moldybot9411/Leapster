@@ -63,7 +63,7 @@ public class Game : Application
     protected override void OnStart()
     {
 		Player = new();
-		Particly = new();
+		Particly = new(new Vector2(50, 50));
 
 		ShowScreen(new MainmenuScreen());
 		LoadLevel(0);
