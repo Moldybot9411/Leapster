@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using ImGuiNET;
-
 using System.Reflection;
 using Leapster.Screens;
 using Leapster.ParticleSystem;
