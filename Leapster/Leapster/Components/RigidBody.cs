@@ -36,7 +36,12 @@ public class RigidBody : Component
         Vector2 br = new(rect.X + rect.Width, rect.Y + rect.Height);
 
         AssignedObject.Rect = rect;
-        ImGui.GetBackgroundDrawList().AddRectFilled(tl + Screenshake.ShakeOffset, br + Screenshake.ShakeOffset, ImGui.ColorConvertFloat4ToU32(new(1, 0, 0, 1)));
+#if DEBUG
+        if (Game.Instance.Configuration.DebugMode)
+        {
+            ImGui.GetForegroundDrawList().AddRect(tl, br, ImGui.ColorConvertFloat4ToU32(new(0, 1, 0, 1)));
+        }
+#endif
     }
 
     private void CheckCollisions()
@@ -44,7 +49,7 @@ public class RigidBody : Component
         //Set to true when Player stood on any surface during the Frame
         IsGrounded = false;
 
-        foreach (GameObject obj in Game.Instance.GameScreen.gameObjects)
+        foreach (GameObject obj in Game.Instance.GameScreen.gameObjects.Where(obj => obj.HasComponent<Box>() && obj.GetComponent<Box>().Collidable))
         {
             RectangleF box = obj.Rect;
 

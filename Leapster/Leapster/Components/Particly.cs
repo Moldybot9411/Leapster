@@ -12,6 +12,7 @@ public class Particly : Component
     public Vector4 Color = new(1, 1, 0, 1);
     public float StartSize = 2.0f;
     public float LifeTime = 0.05f;
+    public float LerpSpeed = 3.0f;
 
     private List<Particle> existingParticles = new List<Particle>();
 
@@ -19,7 +20,6 @@ public class Particly : Component
     {
         Position = position;
 
-        Start();
         Game.Instance.GameScreen.OnRender += Render;
     }
 
@@ -29,7 +29,7 @@ public class Particly : Component
         {
             Vector2 startVelocity = new Vector2(GetRandomNumber(-1.0f, 1.0f), GetRandomNumber(-1.0f, 1.0f));
 
-            existingParticles.Add(new Particle(Position, Color, Vector2.Normalize(startVelocity) * InitialVelocityStrength * GetRandomNumber(0.1f, 1f), StartSize, LifeTime * GetRandomNumber(0.9f, 1.0f), true));
+            existingParticles.Add(new Particle(Vector2.Zero, Color, Vector2.Normalize(startVelocity) * InitialVelocityStrength * GetRandomNumber(0.1f, 1f), StartSize, LifeTime * GetRandomNumber(0.9f, 1.0f), true, LerpSpeed));
         }
 
         base.Start();
@@ -43,7 +43,7 @@ public class Particly : Component
 
             if(particle.LifeTime >= 0)
             {
-                ImGui.GetBackgroundDrawList().AddCircleFilled(particle.AbsolutePosition, particle.Size, ImGui.ColorConvertFloat4ToU32(particle.Color));
+                ImGui.GetBackgroundDrawList().AddCircleFilled(particle.AbsolutePosition + Position, particle.Size, ImGui.ColorConvertFloat4ToU32(particle.Color));
             }
         }
 
@@ -52,7 +52,7 @@ public class Particly : Component
         if (allParticlesDead)
         {
             existingParticles.Clear();
-            Start();
+            AssignedObject.Dispose();
         }
     }
 
@@ -73,8 +73,9 @@ public class Particle
     public float LifeTime;
     public Vector4 Color;
     public Vector2 Velocity;
+    public float LerpSpeed;
 
-    public Particle(Vector2 startPosition, Vector4 color, Vector2 initialVelocity, float size, float lifetime, bool fadesize)
+    public Particle(Vector2 startPosition, Vector4 color, Vector2 initialVelocity, float size, float lifetime, bool fadesize, float lerpSpeed)
     {
         AbsolutePosition = startPosition;
         Color = color;
@@ -82,6 +83,7 @@ public class Particle
         Size = size;
         LifeTime = lifetime;
         FadeSize = fadesize;
+        LerpSpeed = lerpSpeed;
     }
 
     public void UpdatePosition()
@@ -90,7 +92,7 @@ public class Particle
 
         if(FadeSize)
         {
-            Size = float.Lerp(Size, 0, LifeTime * ImGui.GetIO().DeltaTime);
+            Size = float.Lerp(Size, 0, LerpSpeed * ImGui.GetIO().DeltaTime);
         }
 
         LifeTime -= ImGui.GetIO().DeltaTime;

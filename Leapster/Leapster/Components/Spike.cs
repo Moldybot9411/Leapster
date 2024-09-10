@@ -9,7 +9,21 @@ public class Spike : Component
 {
     public Vector4 Color;
 
-    private bool killing = false;
+    private Trigger triggerRef;
+
+    private GameObject playerObject;
+
+    public Spike()
+    {
+        Game.Instance.GameScreen.OnTriggerEvent += CollisionEvent;
+    }
+
+    public override void Start()
+    {
+        triggerRef = AssignedObject.GetComponent<Trigger>();
+
+        base.Start();
+    }
 
     public override void Update()
     {
@@ -20,44 +34,30 @@ public class Spike : Component
 
         ImGui.GetBackgroundDrawList().AddTriangleFilled(p0 + Screenshake.ShakeOffset, p1 + Screenshake.ShakeOffset, p2 + Screenshake.ShakeOffset, Color.ToImguiColor());
 
-        GameObject playerObject = Game.Instance.GameScreen.PlayerObj;
+        playerObject = Game.Instance.GameScreen.PlayerObj;
 
-        if (playerObject == null)
-            return;
-
-        if (rect.IntersectsWith(playerObject.Rect))
+        if (triggerRef != null)
         {
-            if (killing)
-                return;
-
-            killing = true;
-
-            KillPlayerDelayedAsync();
+            //Imitates collision Shape of Geometry Dash spikes
+            RectangleF r = AssignedObject.Rect;
+            triggerRef.Bounds = new(r.X + (r.Width * 0.35f),r.Y + (r.Height * 0.3f), r.Width * 0.3f, r.Height * 0.7f);
         }
     }
 
-    private async void KillPlayerDelayedAsync()
+    private void CollisionEvent(string Tag)
     {
-        GameObject playerObject = Game.Instance.GameScreen.PlayerObj;
-        GameObject particleObject = new GameObject(playerObject.Rect, "Death Particles");
-        particleObject.AddComponent(new Particly(playerObject.Rect.Location.ToVector2())
+        if(Tag == "Spike" && playerObject != null)
         {
-            Amount = 1500,
-            InitialVelocityStrength = 100,
-            LifeTime = 12,
-            Color = System.Drawing.Color.Red.ToVector(),
-            StartSize = 10
-        });
-        Game.Instance.GameScreen.gameObjects.Add(particleObject);
-
-        await Task.Delay(1500);
-
-        particleObject.Dispose();
-        playerObject.Dispose();
-        Game.Instance.GameScreen.gameObjects.Remove(playerObject);
-        Game.Instance.GameScreen.PlayerObj = null;
-
-        killing = false;
+            GameObject particles = new GameObject(playerObject.Rect, "DeathParticles");
+            particles.AddComponent(new Particly(playerObject.Rect.Location.ToVector2())
+            {
+                Amount = 50,
+                Color = new Vector4(1, 0, 0, 1),
+                InitialVelocityStrength = 80.0f,
+                LifeTime = 4.0f,
+                StartSize = 10.0f,
+                LerpSpeed = 3.0f
+            });
+        }
     }
-
 }
