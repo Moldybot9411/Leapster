@@ -37,9 +37,4 @@
 		</None>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Remove="Assets\random.wav" />
-	  <None Remove="Assets\Sounds\death.wav" />
-	  <None Remove="Assets\Sounds\jump.wav" />
-	</ItemGroup>
 </Project>

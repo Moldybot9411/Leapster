@@ -1,4 +1,5 @@
-﻿using Leapster.ObjectSystem;
+﻿using Leapster.Audio;
+using Leapster.ObjectSystem;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -51,11 +52,14 @@ internal class Player : Component
             AssignedObject.Dispose();
             Game.Instance.GameScreen.gameObjects.Remove(AssignedObject);
             Game.Instance.GameScreen.PlayerObj = null;
+
+            AudioEngine.Instance.PlayResourceSound("death.wav");
         }
     }
 
     private async void EmitFireworks()
     {
+        Random rand = new();
         for (int i = 0; i < fireworkCount; i++)
         {
             RectangleF r = new(AssignedObject.Rect.Location, new SizeF(10, 10));
@@ -83,5 +87,6 @@ internal class Player : Component
         }
 
         Game.Instance.GameScreen.QueueSync(Game.Instance.GameScreen.UnloadLevel);
+        Game.Instance.GameScreen.QueueSync(() => Game.Instance.ShowScreen(Game.Instance.LevelSelectScreen));
     }
 }
