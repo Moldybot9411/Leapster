@@ -62,6 +62,13 @@ public class MainmenuScreen : IScreen
 
     public void RenderImGui()
     {
+        if (ImGui.IsKeyDown(ImGuiKey.ModCtrl) &&
+            ImGui.IsKeyDown(ImGuiKey._6) &&
+            ImGui.IsKeyPressed(ImGuiKey._9))
+        {
+            Configuration.HMode = !Configuration.HMode;
+        }
+
         ImGui.Begin("test",
             ImGuiWindowFlags.NoMove |
             ImGuiWindowFlags.NoTitleBar |

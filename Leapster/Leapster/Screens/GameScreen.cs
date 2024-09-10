@@ -28,7 +28,11 @@ public class GameScreen : IScreen
     {
         PlayerObj = new(new RectangleF(startPos, new SizeF(20, 40)), "Player");
         PlayerObj.AddComponent(new CharacterController());
-        PlayerObj.AddComponent(new H());
+
+        if (Game.Instance.Configuration.HMode)
+        {
+            PlayerObj.AddComponent(new H());
+        }
 
         gameObjects.Add(PlayerObj);
     }

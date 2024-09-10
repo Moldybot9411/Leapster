@@ -2,7 +2,6 @@
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace Leapster.Audio;
 

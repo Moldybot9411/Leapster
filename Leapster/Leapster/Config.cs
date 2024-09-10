@@ -11,6 +11,8 @@ public class Config
 	public bool FpsOverlay;
 	public string LevelsFolder = Path.GetFullPath("./Levels/");
 
+	public bool HMode;
+
 #if DEBUG
 	public bool DebugMode;
 #endif
