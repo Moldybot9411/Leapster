@@ -150,7 +150,7 @@ public class GameScreen : IScreen
             ImGui.GetBackgroundDrawList().AddText(new Vector2(10, 10), Color.Lime.ToImGuiColor(), $"FPS: {ImGui.GetIO().Framerate:F2}");
         }
 
-        if (ImGui.IsKeyPressed(ImGuiKey.Escape))
+        if (ImGui.IsKeyPressed(ImGuiKey.R))
         {
             ReloadLevel();
         }
