@@ -191,8 +191,30 @@ public class LevelEditorScreen : IScreen
         ImGui.End();
     }
 
+    private void RenderButtons()
+    {
+        ImGui.Begin("Buttons",
+            ImGuiWindowFlags.NoTitleBar |
+            ImGuiWindowFlags.NoResize |
+            ImGuiWindowFlags.NoMove |
+            ImGuiWindowFlags.NoBackground |
+            ImGuiWindowFlags.NoSavedSettings);
+
+        if (ImGui.Button(FontAwesome6.CandyCane))
+        {
+            Game.Instance.ShowScreen(Game.Instance.MainmenuScreen);
+        }
+
+        ImGui.SetWindowPos(new Vector2(10, 10));
+        ImGui.SetWindowSize(Vector2.Zero);
+
+        ImGui.End();
+    }
+
     public void RenderImGui()
     {
+        RenderButtons();
+
         RenderLevelEditorWindow();
 
         if (level == null)
@@ -240,6 +262,13 @@ public class LevelEditorScreen : IScreen
                     Vector2 p2 = new(rect.X + rect.Width, rect.Y + rect.Height); // Bottom-right point of the rectangle
 
                     draw.AddTriangleFilled(p0, p1, p2, obj.Color.ToImguiColor());
+                    break;
+                }
+
+                case EditorObjectType.Goal:
+                {
+                    draw.AddRectFilled(topLeft, bottomRight, Color.Yellow.ToImGuiColor());
+
                     break;
                 }
 

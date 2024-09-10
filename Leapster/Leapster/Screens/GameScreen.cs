@@ -76,6 +76,11 @@ public class GameScreen : IScreen
                         Color = obj.Color
                     });
                     break;
+
+                case EditorObjectType.Goal:
+                    gameObject.AddComponent(new Trigger("Goal"));
+
+                    break;
             }
 
             gameObjects.Add(gameObject);

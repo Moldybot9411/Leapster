@@ -4,5 +4,6 @@ public enum EditorObjectType
 {
     Box,
     Spike,
+    Goal,
     PlayerSpawn
 }
