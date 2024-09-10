@@ -9,6 +9,8 @@ public class Spike : Component
 {
     public Vector4 Color;
 
+    private bool killing = false;
+
     public override void Update()
     {
         RectangleF rect = AssignedObject.Rect;
@@ -25,10 +27,31 @@ public class Spike : Component
 
         if (rect.IntersectsWith(playerObject.Rect))
         {
+            if (killing)
+                return;
+
+            killing = true;
+
             playerObject.AddComponent(new Particly(playerObject.Rect.Location.ToVector2())
             {
                 Amount = 1500
             });
+
+            KillPlayerDelayedAsync();
         }
     }
+
+    private async void KillPlayerDelayedAsync()
+    {
+        await Task.Delay(1500);
+
+        GameObject playerObject = Game.Instance.GameScreen.PlayerObj;
+
+        playerObject.Dispose();
+        Game.Instance.GameScreen.gameObjects.Remove(playerObject);
+        Game.Instance.GameScreen.PlayerObj = null;
+
+        killing = false;
+    }
+
 }
