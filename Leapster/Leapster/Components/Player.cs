@@ -96,7 +96,7 @@ internal class Player : Component
 
             p.AddComponent(new Firework());
 
-            AudioEngine.Instance.PlayResourceSound("firework3.wav");
+            AudioEngine.Instance.PlayResourceSound("explosion2.wav");
 
             await Task.Delay(500);
         }
