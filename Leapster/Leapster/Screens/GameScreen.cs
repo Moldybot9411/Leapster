@@ -11,6 +11,7 @@ namespace Leapster.Screens;
 public class GameScreen : IScreen
 {
     public event Action OnRender = delegate { };
+    public event Action<string> OnTriggerEvent = delegate { };
 
     public List<GameObject> gameObjects = [];
 
@@ -18,6 +19,8 @@ public class GameScreen : IScreen
     public float TimeScale;
 
     public GameObject PlayerObj;
+
+    private string currentLevelPath = "";
 
     public void Show()
     {
@@ -27,6 +30,7 @@ public class GameScreen : IScreen
     private void SpawnPlayer(PointF startPos)
     {
         PlayerObj = new(new RectangleF(startPos, new SizeF(20, 40)), "Player");
+        PlayerObj.AddComponent(new Player());
         PlayerObj.AddComponent(new CharacterController());
         PlayerObj.AddComponent(new H());
 
@@ -41,6 +45,7 @@ public class GameScreen : IScreen
     {
         string content = File.ReadAllText(levelFile);
         EditorLevel level = JsonConvert.DeserializeObject<EditorLevel>(content);
+        currentLevelPath = levelFile;
         LoadLevel(level);
     }
 
@@ -66,25 +71,59 @@ public class GameScreen : IScreen
                 case EditorObjectType.Box:
                     gameObject.AddComponent(new Box()
                     {
-                        Color = obj.Color
+                        Color = obj.Color,
+                        Collidable = true
                     });
+
                     break;
 
                 case EditorObjectType.Spike:
+                    gameObject.AddComponent(new Trigger("Spike"));
                     gameObject.AddComponent(new Spike()
                     {
                         Color = obj.Color
                     });
+
                     break;
 
                 case EditorObjectType.Goal:
                     gameObject.AddComponent(new Trigger("Goal"));
+                    gameObject.AddComponent(new Box()
+                    {
+                        Color = new(1, 1, 0, 1),
+                        Collidable = false
+                    });
 
                     break;
             }
 
             gameObjects.Add(gameObject);
         }
+    }
+
+    public void Unloadlevel()
+    {
+        foreach (GameObject gameObject in gameObjects)
+        {
+            gameObject.Dispose();
+        }
+
+        PlayerObj = null;
+        gameObjects.Clear();
+    }
+
+    public void ReloadLevel()
+    {
+        Unloadlevel();
+
+        LoadLevel(currentLevelPath);
+    }
+
+    public async void ReloadLevelDelayed(int delay)
+    {
+        await Task.Delay(delay);
+
+        ReloadLevel();
     }
 
     public void RenderImGui()
@@ -94,6 +133,16 @@ public class GameScreen : IScreen
             ImGui.GetBackgroundDrawList().AddText(new Vector2(10, 10), Color.Lime.ToImGuiColor(), $"FPS: {ImGui.GetIO().Framerate:F2}");
         }
 
+        if (ImGui.IsKeyPressed(ImGuiKey.Escape))
+        {
+            ReloadLevel();
+        }
+
         OnRender();
+    }
+
+    public void OnTrigger(string tag)
+    {
+        OnTriggerEvent(tag);
     }
 }

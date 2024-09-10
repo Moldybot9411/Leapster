@@ -103,8 +103,15 @@ public static class ImGuiExtensions
         }
     }
 
+	private static Dictionary<string, Tuple<IntPtr, Vector2>> cachedImages = [];
 	public static unsafe IntPtr LoadImage(string path, out Vector2 textureSize)
 	{
+		if (cachedImages.TryGetValue(path, out Tuple<IntPtr, Vector2> tuple))
+		{
+			textureSize = tuple.Item2;
+			return tuple.Item1;
+		}
+
         GL gl = Game.Instance.Gl;
 
         uint textureId = gl.GenTexture();
@@ -131,6 +138,8 @@ public static class ImGuiExtensions
 
         gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.Linear);
         gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Linear);
+
+		cachedImages.Add(path, new Tuple<IntPtr, Vector2>((IntPtr)textureId, textureSize));
 
 		return (IntPtr)textureId;
     }

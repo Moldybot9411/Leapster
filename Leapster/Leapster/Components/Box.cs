@@ -8,6 +8,7 @@ public class Box : Component
 {
 
     public Vector4 Color;
+    public bool Collidable = false;
 
     public override void Update()
     {

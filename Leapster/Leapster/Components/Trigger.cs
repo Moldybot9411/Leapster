@@ -14,9 +14,9 @@ namespace Leapster.Components;
 internal class Trigger : Component
 {
     public RectangleF Bounds;
-    public string Tag = "";
+    public string Tag { get; private set; } = "";
 
-    private Vector2 customOffset = new(10,10);
+    private Vector2 customOffset = new();
 
     private GameObject playerObj;
 
@@ -34,9 +34,10 @@ internal class Trigger : Component
 
     public override void Update()
     {
+        playerObj = Game.Instance.GameScreen.PlayerObj;
+
         if(playerObj == null)
         {
-            playerObj = Game.Instance.GameScreen.PlayerObj;
             return;
         }
 
@@ -44,7 +45,7 @@ internal class Trigger : Component
 
         if (updatedBound.IntersectsWith(playerObj.Rect))
         {
-            Console.WriteLine($"Collided with {Tag}!");
+            Game.Instance.GameScreen.OnTrigger(Tag);
         }
 
         Vector2 tlObj = AssignedObject.Rect.Location.ToVector2();
@@ -53,9 +54,11 @@ internal class Trigger : Component
         Vector2 tlCol = Bounds.Location.ToVector2() + customOffset;
         Vector2 brCol = tlCol + Bounds.Size.ToVector2();
 
-        ImGui.GetBackgroundDrawList().AddRectFilled(tlObj + Screenshake.ShakeOffset, brObj + Screenshake.ShakeOffset, Color.Yellow.ToImGuiColor());
 #if DEBUG
-        ImGui.GetBackgroundDrawList().AddRect(tlCol, brCol, Color.Red.ToImGuiColor());
+        if (Game.Instance.Configuration.DebugMode)
+        {
+            ImGui.GetForegroundDrawList().AddRect(tlCol, brCol, Color.Blue.ToImGuiColor());
+        }
 #endif
     }
 
