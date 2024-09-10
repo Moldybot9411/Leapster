@@ -200,10 +200,16 @@ public class LevelEditorScreen : IScreen
             ImGuiWindowFlags.NoBackground |
             ImGuiWindowFlags.NoSavedSettings);
 
+        ImGui.PushStyleColor(ImGuiCol.Button, Color.FromArgb(255, 225, 67, 44).ToImGuiColor());
+        ImGui.PushStyleColor(ImGuiCol.ButtonHovered, Color.FromArgb(255, 255, 100, 44).ToImGuiColor());
+        ImGui.PushStyleColor(ImGuiCol.ButtonActive, Color.FromArgb(255, 133, 42, 29).ToImGuiColor());
+
         if (ImGui.Button(FontAwesome6.CandyCane))
         {
             Game.Instance.ShowScreen(Game.Instance.MainmenuScreen);
         }
+
+        ImGui.PopStyleColor(3);
 
         ImGui.SetWindowPos(new Vector2(10, 10));
         ImGui.SetWindowSize(Vector2.Zero);
