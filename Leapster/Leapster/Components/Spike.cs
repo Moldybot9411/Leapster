@@ -13,16 +13,19 @@ public class Spike : Component
 
     private GameObject playerObject;
 
-    public Spike()
-    {
-        Game.Instance.GameScreen.OnTriggerEvent += CollisionEvent;
-    }
-
     public override void Start()
     {
+        Game.Instance.GameScreen.OnTriggerEvent += CollisionEvent;
         triggerRef = AssignedObject.GetComponent<Trigger>();
 
         base.Start();
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+
+        Game.Instance.GameScreen.OnTriggerEvent -= CollisionEvent;
     }
 
     public override void Update()
@@ -56,7 +59,7 @@ public class Spike : Component
                 InitialVelocityStrength = 80.0f,
                 LifeTime = 4.0f,
                 StartSize = 10.0f,
-                LerpSpeed = 3.0f
+                LerpSpeed = 3.0f,
             });
         }
     }

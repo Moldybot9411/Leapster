@@ -108,8 +108,8 @@ public class LevelSelectScreen : IScreen
 
                 if (ImGui.Button($"Play##{i}"))
                 {
-                    Game.Instance.ShowScreen(Game.Instance.GameScreen);
                     Game.Instance.GameScreen.LoadLevel(level.Path);
+                    Game.Instance.ShowScreen(Game.Instance.GameScreen);
                 }
             }
 

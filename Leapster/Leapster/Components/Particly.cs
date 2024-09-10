@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using System.Numerics;
 using Leapster.ObjectSystem;
+using System.Collections.Concurrent;
 
 namespace Leapster.Components;
 
@@ -14,7 +15,7 @@ public class Particly : Component
     public float LifeTime = 0.05f;
     public float LerpSpeed = 3.0f;
 
-    private List<Particle> existingParticles = new List<Particle>();
+    private ConcurrentQueue<Particle> existingParticles = new ConcurrentQueue<Particle>();
 
     public Particly(Vector2 position)
     {
@@ -29,7 +30,15 @@ public class Particly : Component
         {
             Vector2 startVelocity = new Vector2(GetRandomNumber(-1.0f, 1.0f), GetRandomNumber(-1.0f, 1.0f));
 
-            existingParticles.Add(new Particle(Vector2.Zero, Color, Vector2.Normalize(startVelocity) * InitialVelocityStrength * GetRandomNumber(0.1f, 1f), StartSize, LifeTime * GetRandomNumber(0.9f, 1.0f), true, LerpSpeed));
+            existingParticles.Enqueue(new Particle(
+                Vector2.Zero, 
+                Color, 
+                Vector2.Normalize(startVelocity) * InitialVelocityStrength * GetRandomNumber(0.1f, 1f), 
+                StartSize, 
+                LifeTime * GetRandomNumber(0.9f, 1.0f), 
+                true, 
+                LerpSpeed)
+            );
         }
 
         base.Start();
