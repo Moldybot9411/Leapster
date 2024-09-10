@@ -17,15 +17,20 @@ public class GameScreen : IScreen
     public float Gravity;
     public float TimeScale;
 
+    public GameObject PlayerObj;
+
     public void Show()
     {
         Game.Instance.clearColor = Color.FromArgb(255, 115, 140, 153);
+    }
 
-        GameObject player = new(new RectangleF(200, 50, 20, 40), "Player");
-        player.AddComponent(new CharacterController());
-        player.AddComponent(new H());
+    private void SpawnPlayer(PointF startPos)
+    {
+        PlayerObj = new(new RectangleF(startPos, new SizeF(20, 40)), "Player");
+        PlayerObj.AddComponent(new CharacterController());
+        PlayerObj.AddComponent(new H());
 
-        gameObjects.Add(player);
+        gameObjects.Add(PlayerObj);
     }
 
     public void Hide()
@@ -47,6 +52,13 @@ public class GameScreen : IScreen
         for (int i = 0; i < level.Objects.Count; i++)
         {
             EditorObject obj = level.Objects[i];
+            
+            if (obj.Type == EditorObjectType.PlayerSpawn)
+            {
+                SpawnPlayer(obj.ViewRect.Location + obj.ViewRect.Size / 2);
+                continue;
+            }
+            
             GameObject gameObject = new GameObject(obj.ViewRect, $"({i}) {Enum.GetName(obj.Type)}");
 
             switch (obj.Type)
@@ -56,7 +68,6 @@ public class GameScreen : IScreen
                     {
                         Color = obj.Color
                     });
-                    //gameObject.AddComponent(new H());
                     break;
 
                 case EditorObjectType.Spike:
@@ -64,7 +75,6 @@ public class GameScreen : IScreen
                     {
                         Color = obj.Color
                     });
-                    gameObject.AddComponent(new H());
                     break;
             }
 

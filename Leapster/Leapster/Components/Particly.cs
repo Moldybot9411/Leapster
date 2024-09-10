@@ -31,6 +31,8 @@ public class Particly : Component
 
             existingParticles.Add(new Particle(Position, Color, Vector2.Normalize(startVelocity) * InitialVelocityStrength * GetRandomNumber(0.1f, 1f), StartSize, LifeTime * GetRandomNumber(0.9f, 1.0f), true));
         }
+
+        base.Start();
     }
 
     private void Render()

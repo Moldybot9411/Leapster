@@ -3,5 +3,6 @@
 public enum EditorObjectType
 {
     Box,
-    Spike
+    Spike,
+    PlayerSpawn
 }

@@ -15,6 +15,8 @@ public class RigidBody : Component
     public override void Start()
     {
         rect = AssignedObject.Rect;
+
+        base.Start();
     }
 
     public override void Update()

@@ -43,8 +43,14 @@ public class LevelEditorScreen : IScreen
         currentLevelRandom = new Random().Next();
     }
 
-    private void SpawnBox(Vector2 position)
+    private void SpawnObject(Vector2 position)
     {
+        if (currentObjectType == (int)EditorObjectType.PlayerSpawn)
+        {
+            if (level.Objects.Where(obj => obj.Type == EditorObjectType.PlayerSpawn).Any())
+                return;
+        }
+
         level.Objects.Add(new EditorObject()
         {
             ViewRect = new RectangleF(new PointF(position), new SizeF(objectSpawnSize)),
@@ -111,7 +117,7 @@ public class LevelEditorScreen : IScreen
 
             if (ImGui.Button("Spawn"))
             {
-                SpawnBox(new Vector2(10, 10));
+                SpawnObject(new Vector2(10, 10));
             }
 
             ImGui.SameLine();
@@ -168,6 +174,8 @@ public class LevelEditorScreen : IScreen
 
                 if (result.IsOk)
                 {
+                    Game.Instance.Configuration.LevelsFolder = new FileInfo(result.Path).Directory.FullName;
+
                     string contents = File.ReadAllText(result.Path);
 
                     EditorLevel loadedLevel = JsonConvert.DeserializeObject<EditorLevel>(contents);
@@ -200,7 +208,7 @@ public class LevelEditorScreen : IScreen
         if (ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
         {
             Vector2 spawnPos = ImGui.GetIO().MousePos - objectSpawnSize / 2;
-            SpawnBox(spawnPos);
+            SpawnObject(spawnPos);
         }
 
         for (int i = 0; i < level.Objects.Count; i++)
@@ -230,10 +238,14 @@ public class LevelEditorScreen : IScreen
                     Vector2 p0 = new(rect.X + rect.Width / 2, rect.Y); // Top-center point of the rectangle
                     Vector2 p1 = new(rect.X, rect.Y + rect.Height); // Bottom-left point of the rectangle
                     Vector2 p2 = new(rect.X + rect.Width, rect.Y + rect.Height); // Bottom-right point of the rectangle
-                    
+
                     draw.AddTriangleFilled(p0, p1, p2, obj.Color.ToImguiColor());
                     break;
                 }
+
+                case EditorObjectType.PlayerSpawn:
+                    draw.AddCircle((obj.ViewRect.Location + obj.ViewRect.Size / 2).ToVector2(), 20, Color.Red.ToImGuiColor());
+                    break;
             }
 
             string popupName = $"BoxColor##{i}";
@@ -251,7 +263,6 @@ public class LevelEditorScreen : IScreen
                 ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(1.0f, 0.2f, 0.2f, 1.0f));
                 ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0.6f, 0.05f, 0.05f, 1.0f));
 
-                bool delete = false;
                 if (ImGui.Button($"{FontAwesome6.TrashCan}##{i}"))
                 {
                     level.Objects.RemoveAt(i);
@@ -259,13 +270,22 @@ public class LevelEditorScreen : IScreen
                     // Generate new random so imgui doesnt move our windows around
                     currentLevelRandom = new Random().Next();
 
-                ImGui.PopStyleColor(3);
-                if (delete)
-                {
-                    level.Objects.RemoveAt(i);
+                    ImGui.PopStyleColor(3);
                     ImGui.End();
                     continue;
                 }
+
+                ImGui.SameLine();
+
+                if (ImGui.Button($"{FontAwesome6.Copy}##{i}") && obj.Type != EditorObjectType.PlayerSpawn)
+                {
+                    EditorObject clonedObject = (EditorObject)obj.Clone();
+
+                    clonedObject.ViewRect.Location += clonedObject.ViewRect.Size;
+                    level.Objects.Add(clonedObject);
+                }
+
+                ImGui.PopStyleColor(3);
             }
 
             if (ImGui.BeginPopup(popupName))

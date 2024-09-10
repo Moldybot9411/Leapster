@@ -22,6 +22,7 @@ public class CharacterController : Component
     public override void Start()
     {
         rect = AssignedObject.Rect;
+        base.Start();
     }
 
     public override void Update()
@@ -76,7 +77,7 @@ public class CharacterController : Component
         //Set to true when Player stood on any surface during the Frame
         IsGrounded = false;
 
-        foreach (GameObject obj in Game.Instance.GameScreen.gameObjects)
+        foreach (GameObject obj in Game.Instance.GameScreen.gameObjects.Where(obj => !obj.HasComponent<CharacterController>()))
         {
             RectangleF box = obj.Rect;
 

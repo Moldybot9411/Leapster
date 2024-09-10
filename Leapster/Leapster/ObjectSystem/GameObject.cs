@@ -2,7 +2,7 @@
 
 namespace Leapster.ObjectSystem;
 
-public class GameObject
+public class GameObject : IDisposable
 {
     public List<Component> Components = [];
 
@@ -13,6 +13,18 @@ public class GameObject
     {
         Name = name;
         Rect = rect;
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+
+        Components.ForEach(RemoveComponent);
+    }
+
+    public bool HasComponent<T>()
+    {
+        return Components.Where(component => component.GetType() == typeof(T)).Any();
     }
 
     public T GetComponent<T>() where T : Component
@@ -26,13 +38,13 @@ public class GameObject
 
         component.AssignedObject = this;
         component.Start();
-        Game.Instance.GameScreen.OnRender += component.Update;
     }
 
     public void RemoveComponent(Component component)
     {
         Components.Remove(component);
-        Game.Instance.GameScreen.OnRender -= component.Update;
+        component.Dispose();
     }
+
 }
 

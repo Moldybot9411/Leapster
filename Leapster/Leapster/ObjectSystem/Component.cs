@@ -1,12 +1,18 @@
 ﻿namespace Leapster.ObjectSystem;
 
-public abstract class Component
+public abstract class Component : IDisposable
 {
     public GameObject AssignedObject { get; internal set; }
 
+    public virtual void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        Game.Instance.GameScreen.OnRender -= Update;
+    }
+
     public virtual void Start()
     {
-        //Intentionally empty
+        Game.Instance.GameScreen.OnRender += Update;
     }
 
     public virtual void Update()
