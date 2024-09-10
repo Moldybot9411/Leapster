@@ -16,7 +16,7 @@ internal class Player : Component
 
     private bool emitted = false;
 
-    private int fireworkCount = 10;
+    private int fireworkCount = 5;
 
     public override void Start()
     {
@@ -50,7 +50,7 @@ internal class Player : Component
             Game.Instance.GameScreen.ReloadLevelDelayed(1500);
 
             AssignedObject.Dispose();
-            Game.Instance.GameScreen.gameObjects.Remove(AssignedObject);
+            Game.Instance.GameScreen.gameObjects = Game.Instance.RemoveItem(Game.Instance.GameScreen.gameObjects, AssignedObject);
             Game.Instance.GameScreen.PlayerObj = null;
 
             AudioEngine.Instance.PlayResourceSound("death.wav");
@@ -83,10 +83,12 @@ internal class Player : Component
 
             p.AddComponent(new Firework());
 
-            await Task.Delay(500);
+            await Task.Delay(300);
         }
 
-        Game.Instance.GameScreen.QueueSync(Game.Instance.GameScreen.UnloadLevel);
-        Game.Instance.GameScreen.QueueSync(() => Game.Instance.ShowScreen(Game.Instance.LevelSelectScreen));
+        await Task.Delay(500);
+        //Game.Instance.GameScreen.QueueSync(Game.Instance.GameScreen.UnloadLevel);
+        Game.Instance.GameScreen.UnloadLevel();
+        Game.Instance.ShowScreen(Game.Instance.LevelSelectScreen);
     }
 }

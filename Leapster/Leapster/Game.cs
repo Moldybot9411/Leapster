@@ -2,6 +2,7 @@
 using System.Reflection;
 using Leapster.Screens;
 using System.Runtime.InteropServices;
+using System.Collections.Concurrent;
 
 namespace Leapster;
 
@@ -101,5 +102,23 @@ public class Game : Application
     protected override void OnRenderImGui()
     {
 		CurrentScreen.RenderImGui();
+    }
+
+    public ConcurrentBag<T> RemoveItem<T>(ConcurrentBag<T> bag, T itemToRemove)
+    {
+        lock (bag)
+        {
+            var tempBag = new ConcurrentBag<T>();
+
+            foreach (T item in bag)
+            {
+                if (!object.Equals(item, itemToRemove))
+                {
+                    tempBag.Add(item);
+                }
+            }
+
+            return tempBag;
+        }
     }
 }

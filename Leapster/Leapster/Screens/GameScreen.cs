@@ -3,6 +3,7 @@ using Leapster.Components;
 using Leapster.LevelEditor;
 using Leapster.ObjectSystem;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.Numerics;
 
@@ -13,7 +14,7 @@ public class GameScreen : IScreen
     public event Action OnRender = delegate { };
     public event Action<string> OnTriggerEvent = delegate { };
 
-    public List<GameObject> gameObjects = [];
+    public ConcurrentBag<GameObject> gameObjects = [];
 
     public float Gravity;
     public float TimeScale;
@@ -22,7 +23,7 @@ public class GameScreen : IScreen
 
     private string currentLevelPath = "";
 
-    private List<Action> syncQueue = [];
+    //private List<Action> syncQueue = [];
 
     public void Show()
     {
@@ -129,19 +130,16 @@ public class GameScreen : IScreen
     {
         await Task.Delay(delay);
 
-        lock (syncQueue)
-        {
-            syncQueue.Add(ReloadLevel);
-        }
+        ReloadLevel();
     }
 
-    public void QueueSync(Action action)
+    /*public void QueueSync(Action action)
     {
         lock (syncQueue)
         {
             syncQueue.Add(action);
         }
-    }
+    }*/
 
     public void RenderImGui()
     {
@@ -152,12 +150,13 @@ public class GameScreen : IScreen
 
         if (ImGui.IsKeyPressed(ImGuiKey.R))
         {
-            ReloadLevel();
+            UnloadLevel();
+            Game.Instance.ShowScreen(Game.Instance.LevelSelectScreen);
         }
 
         OnRender();
 
-        lock (syncQueue)
+        /*lock (syncQueue)
         {
             foreach (Action action in syncQueue)
             {
@@ -165,7 +164,7 @@ public class GameScreen : IScreen
             }
 
             syncQueue.Clear();
-        }
+        }*/
     }
 
     public void OnTrigger(string tag)

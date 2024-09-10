@@ -23,6 +23,7 @@ public class CharacterController : Component
     public override void Start()
     {
         rect = AssignedObject.Rect;
+
         base.Start();
     }
 
@@ -56,7 +57,7 @@ public class CharacterController : Component
 
         if (jumpQueued && IsGrounded)
         {
-            AudioEngine.Instance.PlayResourceSound("jump.wav");
+            //AudioEngine.Instance.PlayResourceSound("jump.wav");
             Velocity.Y = JumpForce;
             Screenshake.Shake(30f, 10f);
 
