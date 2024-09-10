@@ -32,21 +32,27 @@ public class Spike : Component
 
             killing = true;
 
-            playerObject.AddComponent(new Particly(playerObject.Rect.Location.ToVector2())
-            {
-                Amount = 1500
-            });
-
             KillPlayerDelayedAsync();
         }
     }
 
     private async void KillPlayerDelayedAsync()
     {
+        GameObject playerObject = Game.Instance.GameScreen.PlayerObj;
+        GameObject particleObject = new GameObject(playerObject.Rect, "Death Particles");
+        particleObject.AddComponent(new Particly(playerObject.Rect.Location.ToVector2())
+        {
+            Amount = 1500,
+            InitialVelocityStrength = 100,
+            LifeTime = 12,
+            Color = System.Drawing.Color.Red.ToVector(),
+            StartSize = 10
+        });
+        Game.Instance.GameScreen.gameObjects.Add(particleObject);
+
         await Task.Delay(1500);
 
-        GameObject playerObject = Game.Instance.GameScreen.PlayerObj;
-
+        particleObject.Dispose();
         playerObject.Dispose();
         Game.Instance.GameScreen.gameObjects.Remove(playerObject);
         Game.Instance.GameScreen.PlayerObj = null;
