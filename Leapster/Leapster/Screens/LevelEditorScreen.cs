@@ -254,8 +254,10 @@ public class LevelEditorScreen : IScreen
                 bool delete = false;
                 if (ImGui.Button($"{FontAwesome6.TrashCan}##{i}"))
                 {
-                    delete = true;
-                }
+                    level.Objects.RemoveAt(i);
+
+                    // Generate new random so imgui doesnt move our windows around
+                    currentLevelRandom = new Random().Next();
 
                 ImGui.PopStyleColor(3);
                 if (delete)
