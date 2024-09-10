@@ -22,6 +22,8 @@ public class GameScreen : IScreen
 
     private string currentLevelPath = "";
 
+    private List<Action> syncQueue = [];
+
     public void Show()
     {
         Game.Instance.clearColor = Color.FromArgb(255, 115, 140, 153);
@@ -32,7 +34,7 @@ public class GameScreen : IScreen
         PlayerObj = new(new RectangleF(startPos, new SizeF(20, 40)), "Player");
         PlayerObj.AddComponent(new Player());
         PlayerObj.AddComponent(new CharacterController());
-        PlayerObj.AddComponent(new H());
+        //PlayerObj.AddComponent(new H());
 
         gameObjects.Add(PlayerObj);
     }
@@ -101,7 +103,7 @@ public class GameScreen : IScreen
         }
     }
 
-    public void Unloadlevel()
+    public void UnloadLevel()
     {
         foreach (GameObject gameObject in gameObjects)
         {
@@ -114,7 +116,7 @@ public class GameScreen : IScreen
 
     public void ReloadLevel()
     {
-        Unloadlevel();
+        UnloadLevel();
 
         LoadLevel(currentLevelPath);
     }
@@ -123,7 +125,18 @@ public class GameScreen : IScreen
     {
         await Task.Delay(delay);
 
-        ReloadLevel();
+        lock (syncQueue)
+        {
+            syncQueue.Add(ReloadLevel);
+        }
+    }
+
+    public void QueueSync(Action action)
+    {
+        lock (syncQueue)
+        {
+            syncQueue.Add(action);
+        }
     }
 
     public void RenderImGui()
@@ -139,6 +152,16 @@ public class GameScreen : IScreen
         }
 
         OnRender();
+
+        lock (syncQueue)
+        {
+            foreach (Action action in syncQueue)
+            {
+                action();
+            }
+
+            syncQueue.Clear();
+        }
     }
 
     public void OnTrigger(string tag)

@@ -17,14 +17,23 @@ internal class Player : Component
 
     private int fireworkCount = 10;
 
-    public Player()
+    public override void Start()
     {
         Game.Instance.GameScreen.OnTriggerEvent += OnTriggerEvent;
+
+        base.Start();
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        
+        Game.Instance.GameScreen.OnTriggerEvent -= OnTriggerEvent;
     }
 
     private void OnTriggerEvent(string Tag)
     {
-        if(Tag == "Goal")
+        if (Tag == "Goal")
         {
             if (emitted)
                 return;
@@ -35,16 +44,13 @@ internal class Player : Component
             //Game.Instance.GameScreen.Unloadlevel();
         }
 
-        if(Tag == "Spike")
+        if (Tag == "Spike")
         {
-            GameObject player = Game.Instance.GameScreen.gameObjects.Find(obj => obj.HasComponent<CharacterController>());
-            Game.Instance.GameScreen.gameObjects.Remove(player);
-
             Game.Instance.GameScreen.ReloadLevelDelayed(1500);
 
-            Game.Instance.GameScreen.PlayerObj = null;
-
             AssignedObject.Dispose();
+            Game.Instance.GameScreen.gameObjects.Remove(AssignedObject);
+            Game.Instance.GameScreen.PlayerObj = null;
         }
     }
 
@@ -75,5 +81,7 @@ internal class Player : Component
 
             await Task.Delay(500);
         }
+
+        Game.Instance.GameScreen.QueueSync(Game.Instance.GameScreen.UnloadLevel);
     }
 }
