@@ -38,16 +38,34 @@ public class AudioEngine
 
     private Dictionary<string, CachedSampleProvider> sampleCache = [];
 
+    private CachedSampleProvider CacheSound(string name, ISampleProvider sample)
+    {
+        CachedSampleProvider cached = new(sample);
+        sampleCache.Add(name, cached);
+
+        return cached;
+    }
+
+    public CachedSampleProvider CacheResource(string name)
+    {
+        Stream resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
+        ISampleProvider sample = new WaveToSampleProvider(new MediaFoundationResampler(new WaveFileReader(resource), mixer.WaveFormat));
+        return CacheSound(name, sample);
+    }
+
+    public CachedSampleProvider CacheFile(string fileName)
+    {
+        ISampleProvider sample = new AudioFileReader(fileName);
+        return CacheSound(fileName, sample);
+    }
+
     public void PlayResourceSound(string name)
     {
         name = typeof(Program).Namespace + ".Assets.Sounds." + name;
 
         if (!sampleCache.TryGetValue(name, out CachedSampleProvider cached))
         {
-            Stream resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(name);
-            ISampleProvider sample = new WaveToSampleProvider(new MediaFoundationResampler(new WaveFileReader(resource), mixer.WaveFormat));
-            cached = new CachedSampleProvider(sample);
-            sampleCache.Add(name, cached);
+            cached = CacheResource(name);
         }
 
         AddMixerInput(cached);
@@ -57,9 +75,7 @@ public class AudioEngine
     {
         if (!sampleCache.TryGetValue(fileName, out CachedSampleProvider cached))
         {
-            ISampleProvider sample = new AudioFileReader(fileName);
-            cached = new CachedSampleProvider(sample);
-            sampleCache.Add(fileName, cached);
+            cached = CacheFile(fileName);
         }
 
         AddMixerInput(cached);

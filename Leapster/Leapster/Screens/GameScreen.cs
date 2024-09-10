@@ -1,10 +1,12 @@
 ﻿using ImGuiNET;
+using Leapster.Audio;
 using Leapster.Components;
 using Leapster.LevelEditor;
 using Leapster.ObjectSystem;
 using Newtonsoft.Json;
 using System.Drawing;
 using System.Numerics;
+using System.Reflection;
 
 namespace Leapster.Screens;
 
@@ -23,6 +25,15 @@ public class GameScreen : IScreen
     private string currentLevelPath = "";
 
     private List<Action> syncQueue = [];
+
+    public GameScreen()
+    {
+        string prefix = typeof(Program).Namespace + ".Assets.Sounds.";
+        foreach (string name in Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(n => n.StartsWith(prefix)))
+        {
+            AudioEngine.Instance.CacheResource(name);
+        }
+    }
 
     public void Show()
     {
