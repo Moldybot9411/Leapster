@@ -42,27 +42,40 @@ internal class Player : Component
             EmitFireworks();
 
             emitted = true;
-            //Game.Instance.GameScreen.Unloadlevel();
+
+            AssignedObject.Dispose();
+
+            //Refactor pls
+            Game.Instance.GameScreen.gameObjects = Game.Instance.RemoveItem(Game.Instance.GameScreen.gameObjects, AssignedObject);
+            Game.Instance.GameScreen.PlayerObj = null;
         }
 
         if (Tag == "Spike")
         {
+            Screenshake.Shake(100, 10f);
             Game.Instance.GameScreen.ReloadLevelDelayed(1500);
 
             AssignedObject.Dispose();
+
+            //Refactor pls
             Game.Instance.GameScreen.gameObjects = Game.Instance.RemoveItem(Game.Instance.GameScreen.gameObjects, AssignedObject);
             Game.Instance.GameScreen.PlayerObj = null;
 
-            AudioEngine.Instance.PlayResourceSound("death.wav");
+            AudioEngine.Instance.PlayResourceSound("explosion0.wav");
         }
     }
 
     private async void EmitFireworks()
     {
         Random rand = new();
+        GameObject goal = Game.Instance.GameScreen.gameObjects.ToList().Find(obj => obj.Name.Contains("Goal"));
+
+        if (goal == null)
+            return;
+
         for (int i = 0; i < fireworkCount; i++)
         {
-            RectangleF r = new(AssignedObject.Rect.Location, new SizeF(10, 10));
+            RectangleF r = new(new(goal.Rect.Location.X + goal.Rect.Width / 2, goal.Rect.Y), new SizeF(10, 10));
             GameObject p = new GameObject(r, "Firework");
 
 
@@ -83,10 +96,12 @@ internal class Player : Component
 
             p.AddComponent(new Firework());
 
-            await Task.Delay(300);
+            AudioEngine.Instance.PlayResourceSound("firework0.wav");
+
+            await Task.Delay(500);
         }
 
-        await Task.Delay(500);
+        await Task.Delay(1500);
         //Game.Instance.GameScreen.QueueSync(Game.Instance.GameScreen.UnloadLevel);
         Game.Instance.GameScreen.UnloadLevel();
         Game.Instance.ShowScreen(Game.Instance.LevelSelectScreen);

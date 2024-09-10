@@ -57,9 +57,8 @@ public class CharacterController : Component
 
         if (jumpQueued && IsGrounded)
         {
-            //AudioEngine.Instance.PlayResourceSound("jump.wav");
+            AudioEngine.Instance.PlayResourceSound("jump.wav");
             Velocity.Y = JumpForce;
-            Screenshake.Shake(30f, 10f);
 
             jumpQueued = false;
         }

@@ -23,8 +23,6 @@ public class GameScreen : IScreen
 
     private string currentLevelPath = "";
 
-    //private List<Action> syncQueue = [];
-
     public void Show()
     {
         Game.Instance.clearColor = Color.FromArgb(255, 115, 140, 153);
@@ -133,14 +131,6 @@ public class GameScreen : IScreen
         ReloadLevel();
     }
 
-    /*public void QueueSync(Action action)
-    {
-        lock (syncQueue)
-        {
-            syncQueue.Add(action);
-        }
-    }*/
-
     public void RenderImGui()
     {
         if (Game.Instance.Configuration.FpsOverlay)
@@ -148,23 +138,18 @@ public class GameScreen : IScreen
             ImGui.GetBackgroundDrawList().AddText(new Vector2(10, 10), Color.Lime.ToImGuiColor(), $"FPS: {ImGui.GetIO().Framerate:F2}");
         }
 
-        if (ImGui.IsKeyPressed(ImGuiKey.R))
+        if (ImGui.IsKeyPressed(ImGuiKey.Escape))
         {
             UnloadLevel();
             Game.Instance.ShowScreen(Game.Instance.LevelSelectScreen);
         }
 
-        OnRender();
-
-        /*lock (syncQueue)
+        if (ImGui.IsKeyPressed(ImGuiKey.R))
         {
-            foreach (Action action in syncQueue)
-            {
-                action();
-            }
+            ReloadLevel();
+        }
 
-            syncQueue.Clear();
-        }*/
+        OnRender();
     }
 
     public void OnTrigger(string tag)
