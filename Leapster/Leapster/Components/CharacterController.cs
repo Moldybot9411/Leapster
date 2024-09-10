@@ -77,7 +77,7 @@ public class CharacterController : Component
         //Set to true when Player stood on any surface during the Frame
         IsGrounded = false;
 
-        foreach (GameObject obj in Game.Instance.GameScreen.gameObjects.Where(obj => !obj.HasComponent<CharacterController>()))
+        foreach (GameObject obj in Game.Instance.GameScreen.gameObjects.Where(obj => obj.HasComponent<Box>()))
         {
             RectangleF box = obj.Rect;
 

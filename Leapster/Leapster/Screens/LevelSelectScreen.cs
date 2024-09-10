@@ -160,6 +160,9 @@ public class LevelSelectScreen : IScreen
             {
                 EditorLevel level = JsonConvert.DeserializeObject<EditorLevel>(File.ReadAllText(file));
 
+                if (level == null)
+                    continue;
+
                 levels.Add(new LevelData()
                 {
                     Name = level.Name,

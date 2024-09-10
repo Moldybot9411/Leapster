@@ -17,7 +17,7 @@ public class MainmenuScreen : IScreen
     {
         Game.Instance.SdlInstance.GetWindowSize(Game.Instance.ApplicationWindow, ref resolutionInput[0], ref resolutionInput[1]);
 
-        Game.Instance.clearColor = Color.FromArgb(240, 40, 15, 15);
+        Game.Instance.clearColor = Color.FromArgb(255, 21, 10, 8);
     }
 
     public void Hide()
@@ -74,6 +74,13 @@ public class MainmenuScreen : IScreen
         Vector2 parentSize = ImGui.GetWindowSize();
 
         ImGui.SetNextWindowPos((parentSize - childSize) / 2);
+
+        //Colors
+        ImGui.PushStyleColor(ImGuiCol.Text, Color.FromArgb(255, 247, 239, 238).ToImGuiColor());
+
+        ImGui.PushStyleColor(ImGuiCol.Button, Color.FromArgb(255, 225, 67, 44).ToImGuiColor());
+        ImGui.PushStyleColor(ImGuiCol.ButtonHovered, Color.FromArgb(255, 255, 100, 44).ToImGuiColor());
+        ImGui.PushStyleColor(ImGuiCol.ButtonActive, Color.FromArgb(255, 133, 42, 29).ToImGuiColor());
 
         ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 10);
         ImGui.PushFont(Game.Instance.BigFont);
