@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Leapster.Audio;
 using Leapster.ObjectSystem;
 using System.Drawing;
 using System.Numerics;
@@ -55,6 +56,7 @@ public class CharacterController : Component
 
         if (jumpQueued && IsGrounded)
         {
+            AudioEngine.Instance.PlayResourceSound("jump.wav");
             Velocity.Y = JumpForce;
             Screenshake.Shake(30f, 10f);
 

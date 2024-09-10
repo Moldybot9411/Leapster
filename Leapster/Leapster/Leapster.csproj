@@ -8,6 +8,7 @@
 	
 	<ItemGroup>
 		<PackageReference Include="NativeFileDialogSharp" Version="0.5.0" />
+		<PackageReference Include="NAudio" Version="2.2.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" />
 		<PackageReference Include="Silk.NET.SDL" Version="2.21.0" />
@@ -34,5 +35,11 @@
 		<None Include="Levels\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Assets\random.wav" />
+	  <None Remove="Assets\Sounds\death.wav" />
+	  <None Remove="Assets\Sounds\jump.wav" />
 	</ItemGroup>
 </Project>

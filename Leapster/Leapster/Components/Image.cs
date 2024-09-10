@@ -15,9 +15,17 @@ internal class Image : Component
         path = pathToImage;
     }
 
+    public Image(IntPtr textureId)
+    {
+        this.textureId = textureId;
+    }
+
     public override void Start()
     {
-        textureId = ImGuiExtensions.LoadImage(path, out _);
+        if (path != null)
+        {
+            textureId = ImGuiExtensions.LoadImage(path, out _);
+        }
         
         base.Start();
     }

@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using System.Reflection;
 using Leapster.Screens;
+using System.Runtime.InteropServices;
 
 namespace Leapster;
 
@@ -9,11 +10,11 @@ public class Game : Application
 	public static Game Instance { get; private set; }
 
 	public IScreen CurrentScreen { get; private set; } = null;
-	public GameScreen GameScreen { get; private set; } = new GameScreen();
+	public GameScreen GameScreen { get; private set; }
 
-	public MainmenuScreen MainmenuScreen { get; private set; } = new MainmenuScreen();
+	public MainmenuScreen MainmenuScreen { get; private set; }
 
-	public LevelSelectScreen LevelSelectScreen { get; private set; } = new LevelSelectScreen();
+	public LevelSelectScreen LevelSelectScreen { get; private set; }
 
 	public Config Configuration { get; private set; }
 
@@ -78,6 +79,10 @@ public class Game : Application
 		}
 
 		ShowScreen(new MainmenuScreen());
+
+		GameScreen = new();
+		MainmenuScreen = new();
+		LevelSelectScreen = new();
     }
 
 	public void StopGame()
