@@ -19,7 +19,8 @@ public class GameObject : IDisposable
     {
         GC.SuppressFinalize(this);
 
-        Components.ForEach(RemoveComponent);
+        Components.ForEach(component => component.Dispose());
+        Components.Clear();
     }
 
     public bool HasComponent<T>()
