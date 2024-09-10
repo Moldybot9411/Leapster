@@ -121,6 +121,7 @@ public class MainmenuScreen : IScreen
         ImGui.PopFont();
 
         ImGui.PopStyleVar();
+        ImGui.PopStyleColor(4);
 
         ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
         ImGui.SetWindowPos(Vector2.Zero);

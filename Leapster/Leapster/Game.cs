@@ -67,6 +67,10 @@ public class Game : Application
 		try
 		{
 			Configuration = Config.LoadConfig();
+			unsafe
+			{
+				SdlInstance.SetWindowSize(ApplicationWindow, Configuration.Resolution.Width, Configuration.Resolution.Height);
+			}
  		} catch (Exception)
 		{
 			Configuration = new();

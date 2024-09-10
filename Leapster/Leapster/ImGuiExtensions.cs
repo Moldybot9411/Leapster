@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Silk.NET.OpenGL;
 using System.Drawing;
 using System.Numerics;
 using System.Reflection;
@@ -100,5 +101,37 @@ public static class ImGuiExtensions
             ImGui.PopTextWrapPos();
             ImGui.EndTooltip();
         }
+    }
+
+	public static unsafe IntPtr LoadImage(string path, out Vector2 textureSize)
+	{
+        GL gl = Game.Instance.Gl;
+
+        uint textureId = gl.GenTexture();
+
+        using SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(path);
+
+        textureSize = new Vector2(image.Width, image.Height);
+
+        textureId = gl.GenTexture();
+        gl.BindTexture(TextureTarget.Texture2D, textureId);
+
+        // Create an array to hold the pixel data
+        byte[] pixels = new byte[4 * image.Width * image.Height];
+
+        // Copy the pixel data to the array
+        image.CopyPixelDataTo(pixels);
+
+        fixed (byte* pixelPtr = pixels)
+        {
+            gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8,
+                (uint)image.Width, (uint)image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte,
+                pixelPtr);
+        }
+
+        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.Linear);
+        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Linear);
+
+		return (IntPtr)textureId;
     }
 }
