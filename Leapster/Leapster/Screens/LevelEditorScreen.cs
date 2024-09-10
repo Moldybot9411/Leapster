@@ -59,6 +59,14 @@ public class LevelEditorScreen : IScreen
         });
     }
 
+    private void DuplicateObject(EditorObject obj)
+    {
+        EditorObject clonedObject = (EditorObject)obj.Clone();
+
+        clonedObject.ViewRect.Location += clonedObject.ViewRect.Size;
+        level.Objects.Add(clonedObject);
+    }
+
     private void RenderLevelEditorWindow()
     {
         if (!ImGui.Begin("Level Editor"))
@@ -93,6 +101,11 @@ public class LevelEditorScreen : IScreen
                 if (ImGui.Button("Delete"))
                 {
                     level.Objects.RemoveAt(i);
+                }
+
+                if (ImGui.Button("Duplicate"))
+                {
+                    DuplicateObject(obj);
                 }
 
                 ImGui.TreePop();
@@ -314,10 +327,7 @@ public class LevelEditorScreen : IScreen
 
                 if (ImGui.Button($"{FontAwesome6.Copy}##{i}") && obj.Type != EditorObjectType.PlayerSpawn)
                 {
-                    EditorObject clonedObject = (EditorObject)obj.Clone();
-
-                    clonedObject.ViewRect.Location += clonedObject.ViewRect.Size;
-                    level.Objects.Add(clonedObject);
+                    DuplicateObject(obj);
                 }
 
                 ImGui.PopStyleColor(3);
