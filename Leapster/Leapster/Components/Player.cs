@@ -40,7 +40,6 @@ internal class Player : Component
 
             AssignedObject.Dispose();
 
-            //Refactor pls
             Game.Instance.GameScreen.RemoveGameObject(AssignedObject);
             Game.Instance.GameScreen.PlayerObj = null;
         }
@@ -52,7 +51,6 @@ internal class Player : Component
 
             AssignedObject.Dispose();
 
-            //Refactor pls
             Game.Instance.GameScreen.RemoveGameObject(AssignedObject);
             Game.Instance.GameScreen.PlayerObj = null;
 
