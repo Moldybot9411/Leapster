@@ -89,8 +89,8 @@ public class LevelSelectScreen : IScreen
         {
             ImGui.TableSetupColumn("Name");
             ImGui.TableSetupColumn("Date of creation");
-            ImGui.TableSetupColumn("Level Played", ImGuiTableColumnFlags.None, 1f);
-            ImGui.TableSetupColumn("Level Finished", ImGuiTableColumnFlags.None, 1f);
+            ImGui.TableSetupColumn("Played", ImGuiTableColumnFlags.None, 1f);
+            ImGui.TableSetupColumn("Finished", ImGuiTableColumnFlags.None, 1f);
             ImGui.TableSetupColumn("##playbutton", ImGuiTableColumnFlags.None, 0.2f);
 
             ImGui.TableHeadersRow();
@@ -106,15 +106,21 @@ public class LevelSelectScreen : IScreen
 
                 ImGui.TableNextColumn();
 
-                ImGui.Text(level.CreationTime);
+                ImGui.Text(level.CreationTime.Split(" ")[0]);
 
                 ImGui.TableNextColumn();
 
-                ImGui.Text(FontAwesome6.Check);
+                if (level.LevelPlayed)
+                {
+                    ImGui.Text(FontAwesome6.Check);
+                }
 
                 ImGui.TableNextColumn();
 
-                ImGui.Text(FontAwesome6.Check);
+                if (level.LevelCompleted)
+                {
+                    ImGui.Text(FontAwesome6.Check);
+                }
 
                 ImGui.TableNextColumn();
 
