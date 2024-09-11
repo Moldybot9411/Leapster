@@ -294,6 +294,10 @@ public class LevelEditorScreen : IScreen
                 case EditorObjectType.PlayerSpawn:
                     draw.AddCircle((obj.ViewRect.Location + obj.ViewRect.Size / 2).ToVector2(), 20, Color.Red.ToImGuiColor());
                     break;
+
+                case EditorObjectType.Coin:
+                    draw.AddCircleFilled((obj.ViewRect.Location + obj.ViewRect.Size / 2).ToVector2(), 15f, Color.Orange.ToImGuiColor());
+                    break;
             }
 
             string popupName = $"BoxColor##{i}";

@@ -111,6 +111,12 @@ public class GameScreen : IScreen
                     });
 
                     break;
+
+                case EditorObjectType.Coin:
+                    gameObject.AddComponent(new Coin());
+                    gameObject.AddComponent(new Trigger("Coin"));
+
+                    break;
             }
 
             gameObjects.Add(gameObject);
