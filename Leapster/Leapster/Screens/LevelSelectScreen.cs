@@ -77,7 +77,7 @@ public class LevelSelectScreen : IScreen
         ImGui.SetItemTooltip("Rescan Folder");
 
         ImGui.SameLine();
-        if (ImGui.Button(FontAwesome6.Cannabis))
+        if (ImGui.Button(FontAwesome6.Bars))
         {
             Game.Instance.ShowScreen(Game.Instance.MainmenuScreen);
         }

@@ -217,7 +217,7 @@ public class LevelEditorScreen : IScreen
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, Color.FromArgb(255, 255, 100, 44).ToImGuiColor());
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, Color.FromArgb(255, 133, 42, 29).ToImGuiColor());
 
-        if (ImGui.Button(FontAwesome6.CandyCane))
+        if (ImGui.Button(FontAwesome6.Bars))
         {
             Game.Instance.ShowScreen(Game.Instance.MainmenuScreen);
         }
