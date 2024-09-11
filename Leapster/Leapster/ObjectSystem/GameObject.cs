@@ -1,10 +1,11 @@
-﻿using System.Drawing;
+﻿using System.Collections.Concurrent;
+using System.Drawing;
 
 namespace Leapster.ObjectSystem;
 
 public class GameObject : IDisposable
 {
-    public List<Component> Components = [];
+    public ConcurrentBag<Component> Components = [];
 
     public string Name;
     public RectangleF Rect;
@@ -19,7 +20,11 @@ public class GameObject : IDisposable
     {
         GC.SuppressFinalize(this);
 
-        Components.ForEach(component => component.Dispose());
+        foreach (var component in Components)
+        {
+            component.Dispose();
+        }
+
         Components.Clear();
     }
 
@@ -43,7 +48,21 @@ public class GameObject : IDisposable
 
     public void RemoveComponent(Component component)
     {
-        Components.Remove(component);
+        lock (Components)
+        {
+            var tempBag = new ConcurrentBag<Component>();
+
+            foreach (var obj in Components)
+            {
+                if (!object.Equals(obj, component))
+                {
+                    tempBag.Add(obj);
+                }
+            }
+
+            Components = tempBag;
+        }
+
         component.Dispose();
     }
 
