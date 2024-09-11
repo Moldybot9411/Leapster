@@ -49,7 +49,7 @@ internal class Coin : Component
         float sin = MathF.Sin(time * RotationSpeed);
         radius.X = sin * Size;
 
-        ImGui.GetBackgroundDrawList().AddEllipseFilled(AssignedObject.Rect.Location.ToVector2() + AssignedObject.Rect.Size.ToVector2() * 0.5f, radius, Color.Orange.ToImGuiColor());
+        ImGui.GetBackgroundDrawList().AddEllipseFilled(AssignedObject.Rect.Location.ToVector2() + AssignedObject.Rect.Size.ToVector2() * 0.5f + Screenshake.ShakeOffset, radius, Color.Orange.ToImGuiColor());
         //ImGui.GetBackgroundDrawList().AddEllipse(AssignedObject.Rect.Location.ToVector2() + AssignedObject.Rect.Size.ToVector2() * 0.5f, radius, Color.Yellow.ToImGuiColor());
     }
 
