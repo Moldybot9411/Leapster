@@ -23,7 +23,7 @@ public class AudioEngine
 
         MMDevice device = new MMDeviceEnumerator().GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
         WaveFormat mixFormat = device.AudioClient.MixFormat;
-        mixer = new(WaveFormat.CreateIeeeFloatWaveFormat(mixFormat.SampleRate, mixFormat.Channels))
+        mixer = new(WaveFormat.CreateIeeeFloatWaveFormat(mixFormat.SampleRate, 2))
         {
             ReadFully = true
         };
