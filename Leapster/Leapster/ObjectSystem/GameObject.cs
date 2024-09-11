@@ -35,7 +35,10 @@ public class GameObject : IDisposable
 
     public T GetComponent<T>() where T : Component
     {
-        return (T)Components.Where(component => component.GetType() == typeof(T)).FirstOrDefault();
+        lock (Components)
+        {
+            return (T)Components.Where(component => component.GetType() == typeof(T)).FirstOrDefault();
+        }
     }
 
     public void AddComponent(Component component)
