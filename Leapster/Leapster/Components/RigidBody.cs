@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using Leapster.ObjectSystem;
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.Numerics;
 
@@ -48,8 +49,9 @@ public class RigidBody : Component
     {
         //Set to true when Player stood on any surface during the Frame
         IsGrounded = false;
+        ConcurrentBag<GameObject> gameObjectBag = Game.Instance.GameScreen.gameObjects;
 
-        foreach (GameObject obj in Game.Instance.GameScreen.gameObjects.Where(obj => obj.HasComponent<Box>() && obj.GetComponent<Box>().Collidable))
+        foreach (GameObject obj in gameObjectBag.Where(obj => obj.HasComponent<Box>() && obj.GetComponent<Box>().Collidable))
         {
             RectangleF box = obj.Rect;
 
