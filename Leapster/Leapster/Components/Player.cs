@@ -46,7 +46,7 @@ internal class Player : Component
             AssignedObject.Dispose();
 
             //Refactor pls
-            Game.Instance.GameScreen.gameObjects = Game.Instance.RemoveItem(Game.Instance.GameScreen.gameObjects, AssignedObject);
+            Game.Instance.GameScreen.RemoveGameObject(AssignedObject);
             Game.Instance.GameScreen.PlayerObj = null;
         }
 
@@ -58,7 +58,7 @@ internal class Player : Component
             AssignedObject.Dispose();
 
             //Refactor pls
-            Game.Instance.GameScreen.gameObjects = Game.Instance.RemoveItem(Game.Instance.GameScreen.gameObjects, AssignedObject);
+            Game.Instance.GameScreen.RemoveGameObject(AssignedObject);
             Game.Instance.GameScreen.PlayerObj = null;
 
             AudioEngine.Instance.PlayResourceSound("explosion0.wav");

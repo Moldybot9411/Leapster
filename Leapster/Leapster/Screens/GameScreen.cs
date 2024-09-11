@@ -167,4 +167,22 @@ public class GameScreen : IScreen
     {
         OnTriggerEvent(tag);
     }
+
+    public void RemoveGameObject(GameObject itemToRemove)
+    {
+        lock (gameObjects)
+        {
+            var tempBag = new ConcurrentBag<GameObject>();
+
+            foreach (var obj in gameObjects)
+            {
+                if (!object.Equals(obj, itemToRemove))
+                {
+                    tempBag.Add(obj);
+                }
+            }
+
+            gameObjects = tempBag;
+        }
+    }
 }
