@@ -32,7 +32,7 @@ public class MainmenuScreen : IScreen
             return;
         }
 
-        ImGui.TextColored(new Vector4(1, 0, 0, 1), "Changing the resolution is a stupid idea in this game");
+        ImGui.TextColored(new Vector4(1, 0, 0, 1), "Changing the resolution is definetly not recommended in this game");
 
         ImGui.InputInt2("Resolution", ref resolutionInput[0]);
 
