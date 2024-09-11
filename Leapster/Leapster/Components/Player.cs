@@ -34,7 +34,7 @@ internal class Player : Component
             if (emitted)
                 return;
 
-            int savedCollectedCoins = Game.Instance.GameScreen.GetLevelPlayerData().Item1;
+            int savedCollectedCoins = Game.Instance.GameScreen.GetLevelPlayerData(Game.Instance.GameScreen.currentLevelHash).Item1;
             int coinCountToSave = Game.Instance.GameScreen.CoinsCollected > savedCollectedCoins ? Game.Instance.GameScreen.CoinsCollected : savedCollectedCoins;
 
             Game.Instance.GameScreen.SaveLevelPlayerData(coinCountToSave, true, true);

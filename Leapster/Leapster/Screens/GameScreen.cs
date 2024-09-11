@@ -74,7 +74,7 @@ public class GameScreen : IScreen
     {
         currentLevelHash = Game.ComputeFileHash(currentLevelPath);
 
-        SaveLevelPlayerData(GetLevelPlayerData().Item1, true, GetLevelPlayerData().Item3);
+        SaveLevelPlayerData(GetLevelPlayerData(currentLevelHash).Item1, true, GetLevelPlayerData(currentLevelHash).Item3);
         Game.Instance.Configuration.SaveConfig();
 
         Gravity = level.Gravity;
@@ -216,11 +216,11 @@ public class GameScreen : IScreen
         }
     }
 
-    public (int, bool, bool) GetLevelPlayerData()
+    public (int, bool, bool) GetLevelPlayerData(string hash)
     {
-        if (Game.Instance.Configuration.PlayerLevelData.ContainsKey(currentLevelHash))
+        if (Game.Instance.Configuration.PlayerLevelData.ContainsKey(hash))
         {
-            return Game.Instance.Configuration.PlayerLevelData[currentLevelHash];
+            return Game.Instance.Configuration.PlayerLevelData[hash];
         }
         else
         {

@@ -17,6 +17,8 @@ public class LevelSelectScreen : IScreen
         public string Name;
         public string Path;
         public string CreationTime;
+        public bool LevelPlayed = false;
+        public bool LevelCompleted = false;
     }
 
     public unsafe void Show()
@@ -83,11 +85,13 @@ public class LevelSelectScreen : IScreen
         }
         ImGui.SetItemTooltip("Back to Main Menu");
 
-        if (ImGui.BeginTable("Levels", 3, ImGuiTableFlags.Borders | ImGuiTableFlags.Resizable))
+        if (ImGui.BeginTable("Levels", 5, ImGuiTableFlags.Borders | ImGuiTableFlags.Resizable))
         {
             ImGui.TableSetupColumn("Name");
             ImGui.TableSetupColumn("Date of creation");
-            ImGui.TableSetupColumn("##bruh", ImGuiTableColumnFlags.None, 0.1f);
+            ImGui.TableSetupColumn("Level Played", ImGuiTableColumnFlags.None, 1f);
+            ImGui.TableSetupColumn("Level Finished", ImGuiTableColumnFlags.None, 1f);
+            ImGui.TableSetupColumn("##playbutton", ImGuiTableColumnFlags.None, 0.2f);
 
             ImGui.TableHeadersRow();
 
@@ -103,6 +107,14 @@ public class LevelSelectScreen : IScreen
                 ImGui.TableNextColumn();
 
                 ImGui.Text(level.CreationTime);
+
+                ImGui.TableNextColumn();
+
+                ImGui.Text(FontAwesome6.Check);
+
+                ImGui.TableNextColumn();
+
+                ImGui.Text(FontAwesome6.Check);
 
                 ImGui.TableNextColumn();
 
@@ -168,11 +180,18 @@ public class LevelSelectScreen : IScreen
                 if (level == null)
                     continue;
 
+                string fileHash = Game.ComputeFileHash(file);
+
+                bool levelPlayed = Game.Instance.GameScreen.GetLevelPlayerData(fileHash).Item2;
+                bool levelCompleted = Game.Instance.GameScreen.GetLevelPlayerData(fileHash).Item3;
+
                 levels.Add(new LevelData()
                 {
                     Name = level.Name,
                     CreationTime = File.GetCreationTime(file).ToString(),
-                    Path = file
+                    Path = file,
+                    LevelPlayed = levelPlayed,
+                    LevelCompleted = levelCompleted
                 });
             } catch(Exception)
             {
