@@ -10,8 +10,11 @@ public class Config
 	public Size Resolution = new(1280, 720);
 	public bool FpsOverlay;
 	public string LevelsFolder = Path.GetFullPath("./Levels/");
-
+	public int TotalCoinsCollected;
 	public bool HMode;
+
+	// hashcode, coins amount for level
+	public Dictionary<int, int> LevelCoinMap = [];
 
 #if DEBUG
 	public bool DebugMode;

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Leapster.Audio;
 
 namespace Leapster.Components;
 
@@ -20,6 +21,10 @@ internal class Coin : Component
     public override void Start()
     {
         radius = new(Size, Size);
+
+        Game.Instance.GameScreen.currentLevelCoinCount += 1;
+
+        Console.WriteLine(Game.Instance.GameScreen.currentLevelCoinCount);
 
         Game.Instance.GameScreen.OnTriggerEvent += OnTrigger;
 
@@ -41,8 +46,18 @@ internal class Coin : Component
         ImGui.GetBackgroundDrawList().AddEllipseFilled(AssignedObject.Rect.Location.ToVector2() + AssignedObject.Rect.Size.ToVector2() * 0.5f, radius, Color.Orange.ToImGuiColor());
     }
 
-    private void OnTrigger(string Tag)
+    private void OnTrigger(string tag, GameObject obj)
     {
-        Console.WriteLine("Collected Coin!");
+        if(tag == "Coin" && obj == AssignedObject)
+        {
+            Game.Instance.Configuration.TotalCoinsCollected += 1;
+            Game.Instance.GameScreen.CoinsCollected += 1;
+            Console.WriteLine(Game.Instance.Configuration.TotalCoinsCollected);
+
+            AudioEngine.Instance.PlayResourceSound("coin0.wav");
+
+            AssignedObject.Dispose();
+            Game.Instance.GameScreen.RemoveGameObject(AssignedObject);
+        }
     }
 }

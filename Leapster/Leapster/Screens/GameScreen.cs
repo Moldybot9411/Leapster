@@ -14,7 +14,7 @@ namespace Leapster.Screens;
 public class GameScreen : IScreen
 {
     public event Action OnRender = delegate { };
-    public event Action<string> OnTriggerEvent = delegate { };
+    public event Action<string, GameObject> OnTriggerEvent = delegate { };
 
     public ConcurrentBag<GameObject> gameObjects = [];
 
@@ -24,6 +24,9 @@ public class GameScreen : IScreen
     public GameObject PlayerObj;
 
     private string currentLevelPath = "";
+    public int currentLevelHash;
+    public int currentLevelCoinCount;
+    public int CoinsCollected;
 
     public GameScreen()
     {
@@ -67,6 +70,8 @@ public class GameScreen : IScreen
 
     public void LoadLevel(EditorLevel level)
     {
+        currentLevelHash = level.GetHashCode();
+
         Gravity = level.Gravity;
         TimeScale = level.TimeScale;
 
@@ -169,9 +174,9 @@ public class GameScreen : IScreen
         OnRender();
     }
 
-    public void OnTrigger(string tag)
+    public void OnTrigger(string tag, GameObject obj)
     {
-        OnTriggerEvent(tag);
+        OnTriggerEvent(tag, obj);
     }
 
     public void RemoveGameObject(GameObject itemToRemove)
@@ -190,5 +195,10 @@ public class GameScreen : IScreen
 
             gameObjects = tempBag;
         }
+    }
+
+    public void SaveCoins()
+    {
+
     }
 }

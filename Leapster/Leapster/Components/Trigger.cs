@@ -39,7 +39,7 @@ internal class Trigger : Component
 
         if (updatedBound.IntersectsWith(playerObj.Rect))
         {
-            Game.Instance.GameScreen.OnTrigger(Tag);
+            Game.Instance.GameScreen.OnTrigger(Tag, AssignedObject);
         }
 
         Vector2 tlObj = AssignedObject.Rect.Location.ToVector2();

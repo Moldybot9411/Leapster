@@ -47,9 +47,9 @@ public class Spike : Component
         }
     }
 
-    private void CollisionEvent(string Tag)
+    private void CollisionEvent(string tag, GameObject obj)
     {
-        if(Tag == "Spike" && playerObject != null)
+        if(tag == "Spike" && playerObject != null)
         {
             GameObject particles = new GameObject(playerObject.Rect, "DeathParticles");
             particles.AddComponent(new Particly(playerObject.Rect.Location.ToVector2())

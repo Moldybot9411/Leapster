@@ -27,12 +27,14 @@ internal class Player : Component
         Game.Instance.GameScreen.OnTriggerEvent -= OnTriggerEvent;
     }
 
-    private void OnTriggerEvent(string Tag)
+    private void OnTriggerEvent(string tag, GameObject obj)
     {
-        if (Tag == "Goal")
+        if (tag == "Goal")
         {
             if (emitted)
                 return;
+
+            Game.Instance.Configuration.SaveConfig();
 
             EmitFireworks();
 
@@ -45,7 +47,7 @@ internal class Player : Component
             Game.Instance.GameScreen.PlayerObj = null;
         }
 
-        if (Tag == "Spike")
+        if (tag == "Spike")
         {
             Screenshake.Shake(100, 10f);
             Game.Instance.GameScreen.ReloadLevelDelayed(1500);
@@ -63,33 +65,37 @@ internal class Player : Component
     private async void EmitFireworks()
     {
         Random rand = new();
-        GameObject goal = Game.Instance.GameScreen.gameObjects.ToList().Find(obj => obj.Name.Contains("Goal"));
+        List<GameObject> goals = Game.Instance.GameScreen.gameObjects.ToList().FindAll(obj => obj.Name.Contains("Goal"));
 
-        if (goal == null)
+        if (goals == null)
             return;
 
         for (int i = 0; i < fireworkCount; i++)
         {
-            RectangleF r = new(new(goal.Rect.Location.X + goal.Rect.Width / 2, goal.Rect.Y), new SizeF(10, 10));
-            GameObject p = new GameObject(r, "Firework");
-
-
-            p.AddComponent(new Particly(AssignedObject.Rect.Location.ToVector2())
+            foreach (GameObject go in goals)
             {
-                Color = new((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble(), 1),
-                Amount = 100,
-                InitialVelocityStrength = 80.0f,
-                LifeTime = 4.0f,
-                StartSize = 10.0f,
-                LerpSpeed = 3.0f
-            });
+                RectangleF r = new(new(go.Rect.Location.X + go.Rect.Width / 2, go.Rect.Y), new SizeF(10, 10));
+                GameObject p = new GameObject(r, "Firework");
 
-            p.AddComponent(new RigidBody()
-            {
-                Velocity = new(0, -600),
-            });
 
-            p.AddComponent(new Firework());
+                p.AddComponent(new Particly(AssignedObject.Rect.Location.ToVector2())
+                {
+                    Color = new((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble(), 1),
+                    Amount = 100,
+                    InitialVelocityStrength = 80.0f,
+                    LifeTime = 4.0f,
+                    StartSize = 10.0f,
+                    LerpSpeed = 3.0f
+                });
+
+                p.AddComponent(new RigidBody()
+                {
+                    Velocity = new(0, -600),
+                });
+
+                p.AddComponent(new Firework());
+
+            }
 
             AudioEngine.Instance.PlayResourceSound("explosion2.wav");
 
