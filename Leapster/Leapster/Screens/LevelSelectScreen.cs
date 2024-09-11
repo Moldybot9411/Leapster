@@ -137,6 +137,11 @@ public class LevelSelectScreen : IScreen
         ImGui.SetWindowPos(Vector2.Zero);
 
         ImGui.End();
+
+        if (ImGui.IsKeyPressed(ImGuiKey.Escape))
+        {
+            Game.Instance.ShowScreen(Game.Instance.MainmenuScreen);
+        }
     }
 
     private static bool IsLevelsFolderValid() => Directory.Exists(Game.Instance.Configuration.LevelsFolder);

@@ -13,8 +13,8 @@ public class Config
 	public int TotalCoinsCollected;
 	public bool HMode;
 
-	// hashcode, coins amount for level
-	public Dictionary<int, int> LevelCoinMap = [];
+	// hashcode, (coins collected in each played level, level played, level completed)
+	public Dictionary<string, (int, bool, bool)> PlayerLevelData = [];
 
 #if DEBUG
 	public bool DebugMode;
@@ -28,6 +28,10 @@ public class Config
 	public void SaveConfig()
 	{
 		File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(this, Formatting.Indented));
-	}
 
+		foreach (var item in PlayerLevelData)
+		{
+			Console.WriteLine(item);
+		}
+	}
 }

@@ -3,11 +3,13 @@ using Leapster.Audio;
 using Leapster.Components;
 using Leapster.LevelEditor;
 using Leapster.ObjectSystem;
+using NAudio.Mixer;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.Drawing;
 using System.Numerics;
 using System.Reflection;
+using System.Security.Cryptography;
 
 namespace Leapster.Screens;
 
@@ -24,7 +26,7 @@ public class GameScreen : IScreen
     public GameObject PlayerObj;
 
     private string currentLevelPath = "";
-    public int currentLevelHash;
+    public string currentLevelHash;
     public int currentLevelCoinCount;
     public int CoinsCollected;
 
@@ -70,7 +72,10 @@ public class GameScreen : IScreen
 
     public void LoadLevel(EditorLevel level)
     {
-        currentLevelHash = level.GetHashCode();
+        currentLevelHash = Game.ComputeFileHash(currentLevelPath);
+
+        SaveLevelPlayerData(GetLevelPlayerData().Item1, true, GetLevelPlayerData().Item3);
+        Game.Instance.Configuration.SaveConfig();
 
         Gravity = level.Gravity;
         TimeScale = level.TimeScale;
@@ -136,12 +141,14 @@ public class GameScreen : IScreen
         }
 
         PlayerObj = null;
+        CoinsCollected = 0;
         gameObjects.Clear();
     }
 
     public void ReloadLevel()
     {
         UnloadLevel();
+        CoinsCollected = 0;
 
         LoadLevel(currentLevelPath);
     }
@@ -197,8 +204,27 @@ public class GameScreen : IScreen
         }
     }
 
-    public void SaveCoins()
+    public void SaveLevelPlayerData(int coinsCollected, bool levelPlayed, bool levelCompleted)
     {
+        if (Game.Instance.Configuration.PlayerLevelData.ContainsKey(currentLevelHash))
+        {
+            Game.Instance.Configuration.PlayerLevelData[currentLevelHash] = (coinsCollected, levelPlayed, levelCompleted);
+        }
+        else
+        {
+            Game.Instance.Configuration.PlayerLevelData.Add(currentLevelHash, (coinsCollected, levelPlayed, levelCompleted));
+        }
+    }
 
+    public (int, bool, bool) GetLevelPlayerData()
+    {
+        if (Game.Instance.Configuration.PlayerLevelData.ContainsKey(currentLevelHash))
+        {
+            return Game.Instance.Configuration.PlayerLevelData[currentLevelHash];
+        }
+        else
+        {
+            return (0, false, false);
+        }
     }
 }

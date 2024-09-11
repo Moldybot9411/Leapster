@@ -1,7 +1,7 @@
 ﻿using ImGuiNET;
 using System.Reflection;
 using Leapster.Screens;
-using System.Collections.Concurrent;
+using System.Security.Cryptography;
 
 namespace Leapster;
 
@@ -101,4 +101,14 @@ public class Game : Application
     protected override void OnRenderImGui()
     {
 		CurrentScreen.RenderImGui();
-    }}
+    }
+
+    public static string ComputeFileHash(string filePath)
+    {
+        using var sha256 = SHA256.Create();
+        using var fileStream = File.OpenRead(filePath);
+        byte[] hashBytes = sha256.ComputeHash(fileStream);
+        return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+    }
+
+}
