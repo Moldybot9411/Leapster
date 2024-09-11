@@ -131,49 +131,6 @@
         "W": 1.0
       },
       "Type": 0
-    },
-    {
-      "ViewRect": {
-        "Location": {
-          "IsEmpty": false,
-          "X": 13.0,
-          "Y": 200.0
-        },
-        "Size": "149, 103",
-        "X": 13.0,
-        "Y": 200.0,
-        "Width": 149.0,
-        "Height": 103.0,
-        "Left": 13.0,
-        "Top": 200.0,
-        "Right": 162.0,
-        "Bottom": 303.0,
-        "IsEmpty": false
-      },
-      "CollisionRect": {
-        "Location": {
-          "IsEmpty": false,
-          "X": 13.0,
-          "Y": 200.0
-        },
-        "Size": "149, 103",
-        "X": 13.0,
-        "Y": 200.0,
-        "Width": 149.0,
-        "Height": 103.0,
-        "Left": 13.0,
-        "Top": 200.0,
-        "Right": 162.0,
-        "Bottom": 303.0,
-        "IsEmpty": false
-      },
-      "Color": {
-        "X": 1.0,
-        "Y": 1.0,
-        "Z": 1.0,
-        "W": 1.0
-      },
-      "Type": 0
     }
   ]
 }

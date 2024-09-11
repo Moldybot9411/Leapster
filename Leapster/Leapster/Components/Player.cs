@@ -105,7 +105,7 @@ internal class Player : Component
         }
 
         await Task.Delay(1500);
-        //Game.Instance.GameScreen.QueueSync(Game.Instance.GameScreen.UnloadLevel);
+
         Game.Instance.GameScreen.UnloadLevel();
         Game.Instance.ShowScreen(Game.Instance.LevelSelectScreen);
     }
