@@ -37,4 +37,8 @@
 		</None>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Remove="Assets\Sounds\ragdoll.wav" />
+	</ItemGroup>
+
 </Project>

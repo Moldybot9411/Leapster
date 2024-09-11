@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Leapster.Audio;
 using System.Drawing;
 using System.Numerics;
 
@@ -40,6 +41,7 @@ public class MainmenuScreen : IScreen
         {
 			Configuration.Resolution = new Size(resolutionInput[0], resolutionInput[1]);
             Configuration.SaveConfig();
+            AudioEngine.Instance.PlayResourceSound("ragdoll.wav");
             unsafe
             {
                 Game.Instance.SdlInstance.SetWindowSize(Game.Instance.ApplicationWindow, resolutionInput[0], resolutionInput[1]);
