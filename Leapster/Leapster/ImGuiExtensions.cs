@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using Silk.NET.OpenGL;
 using System.Drawing;
 using System.Numerics;
 using System.Reflection;
@@ -90,4 +91,56 @@ public static class ImGuiExtensions
 		}
 	}
 
+    public static void HelpMarker(string description)
+    {
+        ImGui.TextDisabled(FontAwesome6.CircleQuestion);
+        if (ImGui.BeginItemTooltip())
+        {
+            ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
+            ImGui.TextUnformatted(description);
+            ImGui.PopTextWrapPos();
+            ImGui.EndTooltip();
+        }
+    }
+
+	private static Dictionary<string, Tuple<IntPtr, Vector2>> cachedImages = [];
+	public static unsafe IntPtr LoadImage(string path, out Vector2 textureSize)
+	{
+		if (cachedImages.TryGetValue(path, out Tuple<IntPtr, Vector2> tuple))
+		{
+			textureSize = tuple.Item2;
+			return tuple.Item1;
+		}
+
+        GL gl = Game.Instance.Gl;
+
+        uint textureId = gl.GenTexture();
+
+        using SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(path);
+
+        textureSize = new Vector2(image.Width, image.Height);
+
+        textureId = gl.GenTexture();
+        gl.BindTexture(TextureTarget.Texture2D, textureId);
+
+        // Create an array to hold the pixel data
+        byte[] pixels = new byte[4 * image.Width * image.Height];
+
+        // Copy the pixel data to the array
+        image.CopyPixelDataTo(pixels);
+
+        fixed (byte* pixelPtr = pixels)
+        {
+            gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8,
+                (uint)image.Width, (uint)image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte,
+                pixelPtr);
+        }
+
+        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)GLEnum.Linear);
+        gl.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)GLEnum.Linear);
+
+		cachedImages.Add(path, new Tuple<IntPtr, Vector2>((IntPtr)textureId, textureSize));
+
+		return (IntPtr)textureId;
+    }
 }

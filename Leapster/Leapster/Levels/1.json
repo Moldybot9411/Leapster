@@ -1,0 +1,609 @@
+{
+  "Name": "1",
+  "Gravity": 980.0,
+  "TimeScale": 1.0,
+  "Objects": [
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 28.0,
+          "Y": 655.0
+        },
+        "Size": "192, 41",
+        "X": 28.0,
+        "Y": 655.0,
+        "Width": 192.0,
+        "Height": 41.0,
+        "Left": 28.0,
+        "Top": 655.0,
+        "Right": 220.0,
+        "Bottom": 696.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 28.0,
+          "Y": 655.0
+        },
+        "Size": "192, 41",
+        "X": 28.0,
+        "Y": 655.0,
+        "Width": 192.0,
+        "Height": 41.0,
+        "Left": 28.0,
+        "Top": 655.0,
+        "Right": 220.0,
+        "Bottom": 696.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 0
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 44.0,
+          "Y": 537.0
+        },
+        "Size": "100, 100",
+        "X": 44.0,
+        "Y": 537.0,
+        "Width": 100.0,
+        "Height": 100.0,
+        "Left": 44.0,
+        "Top": 537.0,
+        "Right": 144.0,
+        "Bottom": 637.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 44.0,
+          "Y": 537.0
+        },
+        "Size": "100, 100",
+        "X": 44.0,
+        "Y": 537.0,
+        "Width": 100.0,
+        "Height": 100.0,
+        "Left": 44.0,
+        "Top": 537.0,
+        "Right": 144.0,
+        "Bottom": 637.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 3
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 269.0,
+          "Y": 604.0
+        },
+        "Size": "192, 41",
+        "X": 269.0,
+        "Y": 604.0,
+        "Width": 192.0,
+        "Height": 41.0,
+        "Left": 269.0,
+        "Top": 604.0,
+        "Right": 461.0,
+        "Bottom": 645.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 269.0,
+          "Y": 604.0
+        },
+        "Size": "192, 41",
+        "X": 269.0,
+        "Y": 604.0,
+        "Width": 192.0,
+        "Height": 41.0,
+        "Left": 269.0,
+        "Top": 604.0,
+        "Right": 461.0,
+        "Bottom": 645.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 0
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 486.0,
+          "Y": 544.0
+        },
+        "Size": "192, 41",
+        "X": 486.0,
+        "Y": 544.0,
+        "Width": 192.0,
+        "Height": 41.0,
+        "Left": 486.0,
+        "Top": 544.0,
+        "Right": 678.0,
+        "Bottom": 585.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 486.0,
+          "Y": 544.0
+        },
+        "Size": "192, 41",
+        "X": 486.0,
+        "Y": 544.0,
+        "Width": 192.0,
+        "Height": 41.0,
+        "Left": 486.0,
+        "Top": 544.0,
+        "Right": 678.0,
+        "Bottom": 585.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 0
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 490.0,
+          "Y": 670.0
+        },
+        "Size": "478, 42",
+        "X": 490.0,
+        "Y": 670.0,
+        "Width": 478.0,
+        "Height": 42.0,
+        "Left": 490.0,
+        "Top": 670.0,
+        "Right": 968.0,
+        "Bottom": 712.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 490.0,
+          "Y": 670.0
+        },
+        "Size": "478, 42",
+        "X": 490.0,
+        "Y": 670.0,
+        "Width": 478.0,
+        "Height": 42.0,
+        "Left": 490.0,
+        "Top": 670.0,
+        "Right": 968.0,
+        "Bottom": 712.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 0
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 799.0,
+          "Y": 626.0
+        },
+        "Size": "95, 53",
+        "X": 799.0,
+        "Y": 626.0,
+        "Width": 95.0,
+        "Height": 53.0,
+        "Left": 799.0,
+        "Top": 626.0,
+        "Right": 894.0,
+        "Bottom": 679.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 799.0,
+          "Y": 626.0
+        },
+        "Size": "95, 53",
+        "X": 799.0,
+        "Y": 626.0,
+        "Width": 95.0,
+        "Height": 53.0,
+        "Left": 799.0,
+        "Top": 626.0,
+        "Right": 894.0,
+        "Bottom": 679.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 0
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 893.0,
+          "Y": 595.0
+        },
+        "Size": "95, 53",
+        "X": 893.0,
+        "Y": 595.0,
+        "Width": 95.0,
+        "Height": 53.0,
+        "Left": 893.0,
+        "Top": 595.0,
+        "Right": 988.0,
+        "Bottom": 648.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 893.0,
+          "Y": 595.0
+        },
+        "Size": "95, 53",
+        "X": 893.0,
+        "Y": 595.0,
+        "Width": 95.0,
+        "Height": 53.0,
+        "Left": 893.0,
+        "Top": 595.0,
+        "Right": 988.0,
+        "Bottom": 648.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 0
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1035.0,
+          "Y": 569.0
+        },
+        "Size": "192, 41",
+        "X": 1035.0,
+        "Y": 569.0,
+        "Width": 192.0,
+        "Height": 41.0,
+        "Left": 1035.0,
+        "Top": 569.0,
+        "Right": 1227.0,
+        "Bottom": 610.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1035.0,
+          "Y": 569.0
+        },
+        "Size": "192, 41",
+        "X": 1035.0,
+        "Y": 569.0,
+        "Width": 192.0,
+        "Height": 41.0,
+        "Left": 1035.0,
+        "Top": 569.0,
+        "Right": 1227.0,
+        "Bottom": 610.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 0
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1095.0,
+          "Y": 473.0
+        },
+        "Size": "66, 97",
+        "X": 1095.0,
+        "Y": 473.0,
+        "Width": 66.0,
+        "Height": 97.0,
+        "Left": 1095.0,
+        "Top": 473.0,
+        "Right": 1161.0,
+        "Bottom": 570.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 1095.0,
+          "Y": 473.0
+        },
+        "Size": "66, 97",
+        "X": 1095.0,
+        "Y": 473.0,
+        "Width": 66.0,
+        "Height": 97.0,
+        "Left": 1095.0,
+        "Top": 473.0,
+        "Right": 1161.0,
+        "Bottom": 570.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 2
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 421.0,
+          "Y": 562.0
+        },
+        "Size": "40, 42",
+        "X": 421.0,
+        "Y": 562.0,
+        "Width": 40.0,
+        "Height": 42.0,
+        "Left": 421.0,
+        "Top": 562.0,
+        "Right": 461.0,
+        "Bottom": 604.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 421.0,
+          "Y": 562.0
+        },
+        "Size": "40, 42",
+        "X": 421.0,
+        "Y": 562.0,
+        "Width": 40.0,
+        "Height": 42.0,
+        "Left": 421.0,
+        "Top": 562.0,
+        "Right": 461.0,
+        "Bottom": 604.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 0.0,
+        "Z": 0.0,
+        "W": 1.0
+      },
+      "Type": 1
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 638.0,
+          "Y": 504.0
+        },
+        "Size": "40, 42",
+        "X": 638.0,
+        "Y": 504.0,
+        "Width": 40.0,
+        "Height": 42.0,
+        "Left": 638.0,
+        "Top": 504.0,
+        "Right": 678.0,
+        "Bottom": 546.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 638.0,
+          "Y": 504.0
+        },
+        "Size": "40, 42",
+        "X": 638.0,
+        "Y": 504.0,
+        "Width": 40.0,
+        "Height": 42.0,
+        "Left": 638.0,
+        "Top": 504.0,
+        "Right": 678.0,
+        "Bottom": 546.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 0.0,
+        "Z": 0.0,
+        "W": 1.0
+      },
+      "Type": 1
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 492.0,
+          "Y": 629.0
+        },
+        "Size": "40, 42",
+        "X": 492.0,
+        "Y": 629.0,
+        "Width": 40.0,
+        "Height": 42.0,
+        "Left": 492.0,
+        "Top": 629.0,
+        "Right": 532.0,
+        "Bottom": 671.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 492.0,
+          "Y": 629.0
+        },
+        "Size": "40, 42",
+        "X": 492.0,
+        "Y": 629.0,
+        "Width": 40.0,
+        "Height": 42.0,
+        "Left": 492.0,
+        "Top": 629.0,
+        "Right": 532.0,
+        "Bottom": 671.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 0.0,
+        "Z": 0.0,
+        "W": 1.0
+      },
+      "Type": 1
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 524.0,
+          "Y": 597.0
+        },
+        "Size": "100, 97",
+        "X": 524.0,
+        "Y": 597.0,
+        "Width": 100.0,
+        "Height": 97.0,
+        "Left": 524.0,
+        "Top": 597.0,
+        "Right": 624.0,
+        "Bottom": 694.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 524.0,
+          "Y": 597.0
+        },
+        "Size": "100, 97",
+        "X": 524.0,
+        "Y": 597.0,
+        "Width": 100.0,
+        "Height": 97.0,
+        "Left": 524.0,
+        "Top": 597.0,
+        "Right": 624.0,
+        "Bottom": 694.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 4
+    },
+    {
+      "ViewRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 578.0,
+          "Y": 594.0
+        },
+        "Size": "105, 103",
+        "X": 578.0,
+        "Y": 594.0,
+        "Width": 105.0,
+        "Height": 103.0,
+        "Left": 578.0,
+        "Top": 594.0,
+        "Right": 683.0,
+        "Bottom": 697.0,
+        "IsEmpty": false
+      },
+      "CollisionRect": {
+        "Location": {
+          "IsEmpty": false,
+          "X": 578.0,
+          "Y": 594.0
+        },
+        "Size": "105, 103",
+        "X": 578.0,
+        "Y": 594.0,
+        "Width": 105.0,
+        "Height": 103.0,
+        "Left": 578.0,
+        "Top": 594.0,
+        "Right": 683.0,
+        "Bottom": 697.0,
+        "IsEmpty": false
+      },
+      "Color": {
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      },
+      "Type": 4
+    }
+  ]
+}

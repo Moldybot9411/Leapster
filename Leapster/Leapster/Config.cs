@@ -1,14 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
+using System.Drawing;
 
-namespace Leapster
+namespace Leapster;
+
+public class Config
 {
-    internal static class Config
-    {
-        public static float Gravity = 7.0f;
-        public static float TimeScale = 1.0f;
-    }
+	public static string ConfigPath => Path.GetFullPath("./config.json");
+
+	public Size Resolution = new(1280, 720);
+	public bool FpsOverlay;
+	public string LevelsFolder = Path.GetFullPath("./Levels/");
+	public int TotalCoinsCollected;
+	public bool HMode;
+
+	// hashcode, (coins collected in each played level, level played, level completed)
+	public Dictionary<string, (int, bool, bool)> PlayerLevelData = [];
+
+#if DEBUG
+	public bool DebugMode;
+#endif
+
+	public static Config LoadConfig()
+	{
+		return JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigPath));
+	}
+
+	public void SaveConfig()
+	{
+		File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+
+		foreach (var item in PlayerLevelData)
+		{
+			Console.WriteLine(item);
+		}
+	}
 }
