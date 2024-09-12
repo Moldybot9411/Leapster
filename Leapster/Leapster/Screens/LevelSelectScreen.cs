@@ -19,6 +19,9 @@ public class LevelSelectScreen : IScreen
         public string CreationTime;
         public bool LevelPlayed = false;
         public bool LevelCompleted = false;
+
+        public int TotalCoins;
+        public int CoinsCollected;
     }
 
     public unsafe void Show()
@@ -85,13 +88,14 @@ public class LevelSelectScreen : IScreen
         }
         ImGui.SetItemTooltip("Back to Main Menu");
 
-        if (ImGui.BeginTable("Levels", 5, ImGuiTableFlags.Borders | ImGuiTableFlags.Resizable))
+        if (ImGui.BeginTable("Levels", 6, ImGuiTableFlags.Borders | ImGuiTableFlags.Resizable))
         {
             ImGui.TableSetupColumn("Name");
             ImGui.TableSetupColumn("Date of creation");
-            ImGui.TableSetupColumn("Played", ImGuiTableColumnFlags.None, 1f);
-            ImGui.TableSetupColumn("Finished", ImGuiTableColumnFlags.None, 1f);
-            ImGui.TableSetupColumn("##playbutton", ImGuiTableColumnFlags.None, 0.2f);
+            ImGui.TableSetupColumn("Played", ImGuiTableColumnFlags.None, 0.4f);
+            ImGui.TableSetupColumn("Finished", ImGuiTableColumnFlags.None, 0.4f);
+            ImGui.TableSetupColumn("Coins collected", ImGuiTableColumnFlags.None, 0.6f);
+            ImGui.TableSetupColumn("##playbutton", ImGuiTableColumnFlags.None, 0.25f);
 
             ImGui.TableHeadersRow();
 
@@ -121,6 +125,10 @@ public class LevelSelectScreen : IScreen
                 {
                     ImGui.Text(FontAwesome6.Check);
                 }
+
+                ImGui.TableNextColumn();
+
+                ImGui.Text($"{level.CoinsCollected}/{level.TotalCoins}");
 
                 ImGui.TableNextColumn();
 
@@ -197,7 +205,9 @@ public class LevelSelectScreen : IScreen
                     CreationTime = File.GetCreationTime(file).ToString(),
                     Path = file,
                     LevelPlayed = levelPlayed,
-                    LevelCompleted = levelCompleted
+                    LevelCompleted = levelCompleted,
+                    CoinsCollected = Game.Instance.Configuration.PlayerLevelData[fileHash].Item1,
+                    TotalCoins = level.Objects.Where(obj => obj.Type == EditorObjectType.Coin).Count()
                 });
             } catch(Exception)
             {
