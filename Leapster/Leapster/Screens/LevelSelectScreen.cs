@@ -199,6 +199,13 @@ public class LevelSelectScreen : IScreen
                 bool levelPlayed = Game.Instance.GameScreen.GetLevelPlayerData(fileHash).Item2;
                 bool levelCompleted = Game.Instance.GameScreen.GetLevelPlayerData(fileHash).Item3;
 
+                int coinsCollected = 0;
+
+                if (Game.Instance.Configuration.PlayerLevelData.TryGetValue(fileHash, out (int, bool, bool) tuple))
+                {
+                    coinsCollected = tuple.Item1;
+                }
+
                 levels.Add(new LevelData()
                 {
                     Name = level.Name,
@@ -206,12 +213,13 @@ public class LevelSelectScreen : IScreen
                     Path = file,
                     LevelPlayed = levelPlayed,
                     LevelCompleted = levelCompleted,
-                    CoinsCollected = Game.Instance.Configuration.PlayerLevelData[fileHash].Item1,
+                    CoinsCollected = coinsCollected,
                     TotalCoins = level.Objects.Where(obj => obj.Type == EditorObjectType.Coin).Count()
                 });
-            } catch(Exception)
+            } catch(Exception ex)
             {
                 // Ignored, just dont display level no one cares
+                Console.WriteLine($"The h {ex}");
             }
         }
     }

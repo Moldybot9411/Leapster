@@ -3,13 +3,11 @@ using Leapster.Audio;
 using Leapster.Components;
 using Leapster.LevelEditor;
 using Leapster.ObjectSystem;
-using NAudio.Mixer;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.Drawing;
 using System.Numerics;
 using System.Reflection;
-using System.Security.Cryptography;
 
 namespace Leapster.Screens;
 
@@ -194,7 +192,7 @@ public class GameScreen : IScreen
 
             foreach (var obj in gameObjects)
             {
-                if (!object.Equals(obj, itemToRemove))
+                if (!obj.Equals(itemToRemove))
                 {
                     tempBag.Add(obj);
                 }
