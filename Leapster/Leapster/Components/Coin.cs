@@ -26,8 +26,6 @@ internal class Coin : Component
 
         Game.Instance.GameScreen.currentLevelCoinCount += 1;
 
-        Console.WriteLine(Game.Instance.GameScreen.currentLevelCoinCount);
-
         Game.Instance.GameScreen.OnTriggerEvent += OnTrigger;
 
         base.Start();
@@ -59,7 +57,6 @@ internal class Coin : Component
         {
             Game.Instance.Configuration.TotalCoinsCollected += 1;
             Game.Instance.GameScreen.CoinsCollected += 1;
-            Console.WriteLine(Game.Instance.Configuration.TotalCoinsCollected);
 
             AudioEngine.Instance.PlayResourceSound("coin0.wav");
 

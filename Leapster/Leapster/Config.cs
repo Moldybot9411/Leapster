@@ -28,10 +28,5 @@ public class Config
 	public void SaveConfig()
 	{
 		File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(this, Formatting.Indented));
-
-		foreach (var item in PlayerLevelData)
-		{
-			Console.WriteLine(item);
-		}
 	}
 }

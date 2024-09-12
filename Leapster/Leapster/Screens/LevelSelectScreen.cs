@@ -176,7 +176,6 @@ public class LevelSelectScreen : IScreen
     {
         if (!IsLevelsFolderValid())
         {
-            Console.WriteLine("Specified level path is not valid!");
             ImGui.OpenPopup("ERROR");
             return;
         }
@@ -216,10 +215,9 @@ public class LevelSelectScreen : IScreen
                     CoinsCollected = coinsCollected,
                     TotalCoins = level.Objects.Where(obj => obj.Type == EditorObjectType.Coin).Count()
                 });
-            } catch(Exception ex)
+            } catch(Exception)
             {
                 // Ignored, just dont display level no one cares
-                Console.WriteLine($"The h {ex}");
             }
         }
     }
