@@ -52,7 +52,7 @@ public class Particly : Component
 
             if(particle.LifeTime >= 0)
             {
-                ImGui.GetBackgroundDrawList().AddCircleFilled(particle.AbsolutePosition + Position, particle.Size, ImGui.ColorConvertFloat4ToU32(particle.Color));
+                ImGui.GetBackgroundDrawList().AddCircleFilled(particle.AbsolutePosition + Position + Screenshake.ShakeOffset, particle.Size, ImGui.ColorConvertFloat4ToU32(particle.Color));
             }
         }
 
