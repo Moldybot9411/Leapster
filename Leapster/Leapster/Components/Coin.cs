@@ -41,6 +41,11 @@ internal class Coin : Component
 
     public override void Update()
     {
+        Trigger trigger = AssignedObject.GetComponent<Trigger>();
+
+        if (trigger == null)
+            return;
+
         AssignedObject.GetComponent<Trigger>().SetCustomBounds(AssignedObject.Rect.Size.ToVector2() / 2 - new Vector2(15f, 15f), new(30, 30));
 
         time += ImGui.GetIO().DeltaTime;

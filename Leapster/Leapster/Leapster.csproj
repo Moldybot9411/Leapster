@@ -36,5 +36,9 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <None Remove="Assets\Sounds\h.wav" />
+	</ItemGroup>
 
 </Project>

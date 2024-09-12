@@ -65,6 +65,8 @@ public class LevelEditorScreen : IScreen
 
         clonedObject.ViewRect.Location += clonedObject.ViewRect.Size;
         level.Objects.Add(clonedObject);
+
+        currentLevelRandom = new Random().Next();
     }
 
     private void RenderLevelEditorWindow()
@@ -81,8 +83,19 @@ public class LevelEditorScreen : IScreen
             {
                 EditorObject obj = level.Objects[i];
 
+                Vector4 color = obj.Color;
+                color = new Vector4(color.X, color.Y, color.Z, 0.6f);
+
+                ImGui.PushStyleColor(ImGuiCol.HeaderHovered, color.ToImguiColor());
+
                 if (!ImGui.TreeNode($"({i}) {Enum.GetName(obj.Type)}"))
+                {
+                    ImGui.PopStyleColor();
                     continue;
+                }
+                
+                ImGui.PopStyleColor();
+
 
                 // TODO: Add position sliders
 

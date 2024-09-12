@@ -71,6 +71,8 @@ public class MainmenuScreen : IScreen
             ImGui.IsKeyPressed(ImGuiKey._9))
         {
             Configuration.HMode = !Configuration.HMode;
+
+            AudioEngine.Instance.PlayResourceSound("h.wav");
         }
 
         ImGui.Begin("test",
