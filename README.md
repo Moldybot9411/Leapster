@@ -30,5 +30,3 @@ A Game created with ImGui.
 <a href="https://github.com/Moldybot9411/Leapster/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Moldybot9411/Leapster" alt="contrib.rocks image" />
 </a>
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
